@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { assets } from "../assets/assets.js";
-import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { assets } from "../assets/assets";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 
-const Login = () => {
+function Login() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -16,83 +15,91 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  const [showPassword, setShowPassword] = useState(false);
+
   const validateSchema = {
     emailValidator: {
       required: {
         value: true,
-        message: "email is required",
+        message: "Email is required",
       },
       pattern: {
         value: /^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/,
-        message: "Please enter a valid email address",
+        message: "Please enter a valid email",
       },
     },
+
     passwordValidator: {
       required: {
         value: true,
-        message: "password is required",
-      },
-      pattern: {
-        value:
-          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        message:
-          "Minimum 8 characters, 1 uppercase, 1 lowercase, 1 number & 1 special character required.",
+        message: "Password is required",
       },
     },
   };
 
   async function onSubmitHandler(data) {
     try {
+      console.log(data);
       const response = await axios.post("/user/login", data);
+      console.log(response);
       if (response.status == 200) {
-        toast.success(response.data.message);
-        navigate("/");
+        const { role, message } = response.data;
+        toast.success(message);
+
+        switch (role) {
+          case "customer":
+            navigate("/");
+            break;
+
+          case "seller":
+            navigate("/seller/dashboard");
+            break;
+
+          case "admin":
+            navigate("/admin/dashboard");
+            break;
+        }
       }
-    } catch (error) {
-      toast.error(error.response.data.message);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Login failed");
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      {/* Card */}
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
-        {/* Top Image Section */}
-        <div
-          className="h-36 bg-cover bg-center relative"
-          style={{ backgroundImage: `url(${assets.login_img})` }}
-        >
-          <div className="absolute right-6 top-6 text-right">
-            <h2
-              className="text-2xl font-semibold text-black"
-              style={{ fontFamily: "Pacifico, cursive" }}
-            >
-              Wear Web
-            </h2>
-            <p className="text-xs text-gray-600">trendy collection</p>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden max-w-5xl w-full grid md:grid-cols-2 min-h-[550px]">
+        {/* LEFT IMAGE SECTION */}
+        <div className="relative hidden md:block">
+          <img
+            src={assets.login_img}
+            className="absolute inset-0 w-full h-full object-cover"
+            alt="fashion"
+          />
+
+          <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-white text-center px-6">
+            <h1 className="text-4xl font-bold mb-2">Wear Web</h1>
+
+            <p className="text-sm">
+              Discover trendy fashion for men, women & kids
+            </p>
           </div>
         </div>
 
-        {/* Form Section */}
-        <div className="px-8 py-10">
-          <h1 className="text-2xl font-semibold text-center text-teal-600 mb-8">
+        {/* RIGHT FORM SECTION */}
+        <div className="p-8 md:p-12 flex flex-col justify-center">
+          <h2 className="text-2xl md:text-3xl font-semibold text-teal-600 text-center mb-8">
             Login
-          </h1>
+          </h2>
 
-          <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-6">
-            {/* Email Field */}
-            <div className="relative">
-              <fieldset className="border-2 border-teal-600 rounded-md px-3 pt-1 pb-2 bg-white">
-                <legend className="px-2 text-sm text-teal-600">
-                  Enter Your Email
-                </legend>
-
-                <input
-                  type="text"
-                  className="w-full bg-white outline-none text-gray-800 py-1"
-                  {...register("email", validateSchema.emailValidator)}
-                />
-              </fieldset>
+          <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-5">
+            {/* EMAIL */}
+            <div>
+              <input
+                type="email"
+                placeholder="Email Address"
+                {...register("email", validateSchema.emailValidator)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
 
               {errors.email && (
                 <p className="text-red-500 text-xs mt-1">
@@ -101,59 +108,49 @@ const Login = () => {
               )}
             </div>
 
-            {/* Password Field */}
-            <div className="relative mt-6">
-              <fieldset className="border-2 border-teal-600 rounded-md px-3 pt-1 pb-2 bg-white relative">
-                <legend className="px-2 text-sm text-teal-600">
-                  Enter Your Password
-                </legend>
-
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className="w-full bg-white outline-none text-gray-800 py-1 pr-8"
-                  {...register("password", validateSchema.passwordValidator)}
-                />
-
-                {/* Eye Icon */}
-                <div
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-                </div>
-              </fieldset>
+            {/* PASSWORD */}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                {...register("password", validateSchema.passwordValidator)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
 
               {errors.password && (
                 <p className="text-red-500 text-xs mt-1">
                   {errors.password.message}
                 </p>
               )}
+
+              <div
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+              </div>
             </div>
 
-            {/* Button */}
+            {/* LOGIN BUTTON */}
             <button
               type="submit"
-              className="w-full bg-teal-700 text-white py-3 rounded-md
-                       font-semibold shadow-md hover:bg-teal-800 transition"
+              className="w-full bg-teal-700 text-white py-3 rounded-md hover:bg-teal-800 transition"
             >
-              SIGN IN
+              Login
             </button>
-
-            {/* Register */}
-            <p className="text-center text-sm text-gray-600 mt-4">
-              Don't have Account ?{" "}
-              <Link
-                to="/register"
-                className="text-teal-600 font-medium hover:underline"
-              >
-                CREATE ACCOUNT
-              </Link>
-            </p>
           </form>
+
+          {/* REGISTER LINK */}
+          <p className="text-center text-sm text-gray-500 mt-6">
+            Don't have an account?
+            <Link to="/register" className="text-teal-600 ml-1 font-medium">
+              Register
+            </Link>
+          </p>
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default Login;

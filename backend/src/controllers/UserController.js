@@ -1,9 +1,23 @@
 const User = require("../models/UserModel");
+const Seller = require("../models/SellerModel");
 const bcrypt = require("bcrypt");
 
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const {
+      name,
+      email,
+      password,
+      shopName,
+      businessEmail,
+      gstNumber,
+      address,
+      city,
+      state,
+      pincode,
+      isVerified,
+      role,
+    } = req.body;
 
     if (!name || !email || !password) {
       return res.json({
@@ -25,11 +39,26 @@ exports.registerUser = async (req, res) => {
       name,
       email,
       password: encryptedPass,
+      role: role || "customer",
     });
 
+    if (role === "seller") {
+      const createSeller = await Seller.create({
+        userId: createdUser._id,
+        shopName,
+        address,
+        city,
+        state,
+        pincode,
+        gstNumber,
+        businessEmail,
+      });
+    }
+
     res.status(201).json({
-      message: "User registered successfully",
+      message: "registered successfully",
       data: createdUser,
+      role: role,
     });
   } catch (error) {
     res.status(500).json({
@@ -62,9 +91,8 @@ exports.loginUser = async (req, res) => {
     if (isMatched) {
       return res.status(200).json({
         success: true,
-        message: "User login Sucessfully",
+        message: "login Sucessfully",
         data: foundUser,
-        role: foundUser.role,
       });
     } else {
       //401 Unauthorized
