@@ -43,8 +43,11 @@ function Login() {
       const response = await axios.post("/user/login", data);
       console.log(response);
       if (response.status == 200) {
-        const { role, message } = response.data;
+        console.log(response.data);
+        const { role, message } = response.data.data;
         toast.success(message);
+
+        console.log("ROLE:", role);
 
         switch (role) {
           case "customer":

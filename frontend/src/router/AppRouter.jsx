@@ -1,40 +1,56 @@
-  import { createBrowserRouter, RouterProvider } from "react-router-dom";
-  import Login from "../components/Login";
-  import Register from "../components/Register";
-  import UserNavbar from "../components/Customer/UserNavbar";
-  import MainLayout from "../components/Customer/MainLayout";
-  import HomePage from "../pages/HomePage";
-  import SellerSidebar from "../components/Seller/SellerSidebar";
-  import SellerLayout from "../components/Seller/SellerLayout";
-  import AdminLayout from "../components/Admin/AdminLayout";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-  const SellerDashboard = () => <div>Seller Dashboard</div>;
-  const AdminDashboard = () => <div>Admin Dashboard</div>;
+import Login from "../components/Login";
+import Register from "../components/Register";
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <MainLayout />,
-      children: [{ index: true, element: <HomePage /> }],
-    },
-    { path: "/login", element: <Login /> },
+import MainLayout from "../components/Customer/MainLayout";
+import HomePage from "../pages/HomePage";
 
-    { path: "/register", element: <Register /> },
+import SellerLayout from "../components/Seller/SellerLayout";
 
-    {
-      path: "/seller",
-      element: <SellerLayout />,
-      children: [{ path: "dashboard", element: <SellerDashboard /> }],
-    },
-    {
-      path: "/admin",
-      element: <AdminLayout />,
-      children: [{ path: "dashboard", element: <AdminDashboard /> }],
-    },
-  ]);
+import AdminLayout from "../components/Admin/AdminLayout";
+import AdminDashboard from "../components/Admin/AdminDashboard";
 
-  const AppRouter = () => {
-    return <RouterProvider router={router}></RouterProvider>;
-  };
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        index: true,
+        element: <HomePage />,
+      },
+    ],
+  },
 
-  export default AppRouter;
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
+
+  {
+    path: "/seller",
+    element: <SellerLayout />,
+    children: [
+      {
+        path: "dashboard",
+        element: <div>Seller Dashboard</div>,
+      },
+    ],
+  },
+
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        path: "dashboard",
+        element: <AdminDashboard />,
+      },
+    ],
+  },
+]);
+
+const AppRouter = () => {
+  return <RouterProvider router={router} />;
+};
+
+export default AppRouter;
