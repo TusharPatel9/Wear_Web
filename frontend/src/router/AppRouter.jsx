@@ -11,30 +11,26 @@ import AdminLayout from "../components/Admin/AdminLayout";
 const SellerDashboard = () => <div>Seller Dashboard</div>;
 const AdminDashboard = () => <div>Admin Dashboard</div>;
 
-
 const router = createBrowserRouter([
-
   {
     path: "/",
     element: <MainLayout />, // layout route
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: "/login", element: <Login /> },
-      { path: "/register", element: <Register /> },
-    ],
+    children: [{ index: true, element: <HomePage /> }],
+  },
+  { path: "/login", element: <Login /> },
+
+  { path: "/register", element: <Register /> },
+
+  {
+    path: "/seller",
+    element: <SellerLayout />,
+    children: [{ path: "dashboard", element: <SellerDashboard /> }],
   },
   {
-    path: "/seller", element: <SellerLayout />,
-    children: [
-      { path: "dashboard", element: <SellerDashboard /> },
-    ]
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [{ path: "dashboard", element: <AdminDashboard /> }],
   },
-  {
-    path: "/admin", element: <AdminLayout />,
-    children: [
-      { path: "dashboard", element: <AdminDashboard /> },
-    ]
-  }
 ]);
 
 const AppRouter = () => {
