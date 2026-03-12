@@ -1,7 +1,7 @@
 const User = require("../models/UserModel");
 const Seller = require("../models/SellerModel");
 const bcrypt = require("bcrypt");
-const mailSend = require("../utils/MailSend");
+const { mailSend } = require("../utils/MailSend");
 
 exports.registerUser = async (req, res) => {
   try {
@@ -56,7 +56,7 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    await mailSend(email,"welcome to wear-web","you are register the successfully")
+    await mailSend(createdUser.email, "Welcome", "Registration Successful");
 
     res.status(201).json({
       message: "registered successfully",
