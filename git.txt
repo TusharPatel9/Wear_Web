@@ -1,10 +1,11 @@
-clone:
+Git step for change and update
 
+clone:
  copy the link of repo
  go in vs code and run the command -> git clone and paste the link
  if change the code then-> git add .
                         -> git commit -m " "
-                        ->git push origin main
+                        -> git push origin main
 
 
  if the someone chnage the code then do only -> git pull origin main
