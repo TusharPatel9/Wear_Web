@@ -18,7 +18,7 @@ function SellerSidebar() {
     { name: "Dashboard", path: "dashboard", icon: <MdDashboard /> },
     { name: "Orders", path: "orders", icon: <MdShoppingBag /> },
     { name: "Products", path: "products", icon: <MdInventory2 /> },
-    { name: "Add Product", path: "add-product", icon: <MdAdd /> },
+    { name: "Add Product", path: "addproduct", icon: <MdAdd /> },
     { name: "Payment", path: "payment", icon: <MdPayment /> },
     { name: "Transaction", path: "transaction", icon: <MdReceiptLong /> },
   ];
