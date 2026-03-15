@@ -1,13 +1,10 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { assets } from "../assets/assets";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import { Link, useNavigate } from "react-router-dom";
+
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-function Login() {
-  const navigate = useNavigate();
+export default function AddProduct() {
 
   const {
     register,
@@ -15,145 +12,372 @@ function Login() {
     formState: { errors },
   } = useForm();
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [category, setCategory] = useState([]);
+  const [selectedLevel1, setSelectedLevel1] = useState("");
+  const [selectedLevel2, setSelectedLevel2] = useState("");
+  const [selectedLevel3, setSelectedLevel3] = useState("");
+
+  const sizes = ["S", "M", "L", "XL", "XXL"];
+
+  /* ---------------- VALIDATION SCHEMA ---------------- */
 
   const validateSchema = {
-    emailValidator: {
+    titleValidator: {
       required: {
         value: true,
-        message: "Email is required",
+        message: "Product title is required",
       },
-      pattern: {
-        value: /^[a-zA-Z0-9._]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/,
-        message: "Please enter a valid email",
+      minLength: {
+        value: 3,
+        message: "Title must be at least 3 characters",
       },
     },
 
-    passwordValidator: {
+    descriptionValidator: {
       required: {
         value: true,
-        message: "Password is required",
+        message: "Description is required",
+      },
+      minLength: {
+        value: 10,
+        message: "Description must be at least 10 characters",
+      },
+    },
+
+    priceValidator: {
+      required: {
+        value: true,
+        message: "Price is required",
+      },
+      min: {
+        value: 1,
+        message: "Price must be greater than 0",
+      },
+    },
+
+    quantityValidator: {
+      required: {
+        value: true,
+        message: "Quantity is required",
+      },
+      min: {
+        value: 1,
+        message: "Quantity must be at least 1",
+      },
+    },
+
+    colorsValidator: {
+      required: {
+        value: true,
+        message: "Colors are required",
+      },
+    },
+
+    skuValidator: {
+      required: {
+        value: true,
+        message: "SKU is required",
+      },
+      minLength: {
+        value: 3,
+        message: "SKU must be at least 3 characters",
+      },
+    },
+
+    sizeValidator: {
+      required: {
+        value: true,
+        message: "Select at least one size",
       },
     },
   };
 
-  async function onSubmitHandler(data) {
+  /* ---------------- FETCH CATEGORIES ---------------- */
+
+  const getCategories = async () => {
     try {
-      console.log(data);
-      const response = await axios.post("/user/login", data);
-      console.log(response);
-      if (response.status == 200) {
-        console.log(response.data);
-        const { role, message } = response.data.data;
-        toast.success(message);
-
-        console.log("ROLE:", role);
-
-        switch (role) {
-          case "customer":
-            navigate("/");
-            break;
-
-          case "seller":
-            navigate("/seller/dashboard");
-            break;
-
-          case "admin":
-            navigate("/admin/dashboard");
-            break;
-        }
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+      const response = await axios.get("/category/categories");
+      setCategory(response.data.data);
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  /* ---------------- FILTER CATEGORIES ---------------- */
+
+  const lvl1FilteredCategory = category.filter((cat) => cat.level === 1);
+
+  const lvl2FilteredCategory = category.filter(
+    (cat) =>
+      cat.parentCategoryId &&
+      cat.parentCategoryId._id === selectedLevel1
+  );
+
+  const lvl3FilteredCategory = category.filter(
+    (cat) =>
+      cat.parentCategoryId &&
+      cat.parentCategoryId._id === selectedLevel2
+  );
+
+  /* ---------------- SUBMIT HANDLER ---------------- */
+
+  const submitHandler = async (data) => {
+
+    if (!selectedLevel1) {
+      toast.error("Please select a category");
+      return;
+    }
+
+    data.colors = data.colors.split(",").map((color) => color.trim());
+
+    data.categoryId =
+      selectedLevel3 || selectedLevel2 || selectedLevel1;
+
+    try {
+
+      const response = await axios.post("/product/product", data);
+
+      if (response.status === 201) {
+        toast.success(response.data.message);
+      }
+
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden max-w-5xl w-full grid md:grid-cols-2 min-h-[550px]">
-        {/* LEFT IMAGE SECTION */}
-        <div className="relative hidden md:block">
-          <img
-            src={assets.login_img}
-            className="absolute inset-0 w-full h-full object-cover"
-            alt="fashion"
-          />
+      <div className="bg-white rounded-2xl shadow-lg max-w-4xl w-full p-8 md:p-12">
 
-          <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-white text-center px-6">
-            <h1 className="text-4xl font-bold mb-2">Wear Web</h1>
+        <h2 className="text-3xl font-semibold text-teal-600 mb-8 text-center">
+          Add Product
+        </h2>
 
-            <p className="text-sm">
-              Discover trendy fashion for men, women & kids
-            </p>
+        <form
+          onSubmit={handleSubmit(submitHandler)}
+          className="space-y-6"
+        >
+
+          {/* TITLE */}
+
+          <div>
+            <input
+              type="text"
+              placeholder="Product Title"
+              {...register("title", validateSchema.titleValidator)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
+            />
+
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.title.message}
+              </p>
+            )}
           </div>
-        </div>
 
-        {/* RIGHT FORM SECTION */}
-        <div className="p-8 md:p-12 flex flex-col justify-center">
-          <h2 className="text-2xl md:text-3xl font-semibold text-teal-600 text-center mb-8">
-            Login
-          </h2>
+          {/* DESCRIPTION */}
 
-          <form onSubmit={handleSubmit(onSubmitHandler)} className="space-y-5">
-            {/* EMAIL */}
+          <div>
+            <input
+              type="text"
+              placeholder="Product Description"
+              {...register(
+                "description",
+                validateSchema.descriptionValidator
+              )}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
+            />
+
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+
+          {/* CATEGORY */}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <select
+              value={selectedLevel1}
+              onChange={(e) => {
+                setSelectedLevel1(e.target.value);
+                setSelectedLevel2("");
+                setSelectedLevel3("");
+              }}
+              className="border border-gray-300 rounded-lg px-4 py-3"
+            >
+              <option value="">Select Category</option>
+
+              {lvl1FilteredCategory.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={selectedLevel2}
+              onChange={(e) => {
+                setSelectedLevel2(e.target.value);
+                setSelectedLevel3("");
+              }}
+              disabled={!selectedLevel1}
+              className="border border-gray-300 rounded-lg px-4 py-3"
+            >
+              <option value="">Select Subcategory</option>
+
+              {lvl2FilteredCategory.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={selectedLevel3}
+              onChange={(e) =>
+                setSelectedLevel3(e.target.value)
+              }
+              disabled={!selectedLevel2}
+              className="border border-gray-300 rounded-lg px-4 py-3"
+            >
+              <option value="">Select Subcategory 2</option>
+
+              {lvl3FilteredCategory.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+
+          </div>
+
+          {/* PRICE + QUANTITY */}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
             <div>
               <input
-                type="email"
-                placeholder="Email Address"
-                {...register("email", validateSchema.emailValidator)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                type="number"
+                placeholder="Price"
+                {...register("price", validateSchema.priceValidator)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
-              {errors.email && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.email.message}
+              {errors.price && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.price.message}
                 </p>
               )}
             </div>
 
-            {/* PASSWORD */}
-            <div className="relative">
+            <div>
               <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                {...register("password", validateSchema.passwordValidator)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                type="number"
+                placeholder="Quantity"
+                {...register(
+                  "quantity",
+                  validateSchema.quantityValidator
+                )}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
-              {errors.password && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors.password.message}
+              {errors.quantity && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.quantity.message}
                 </p>
               )}
-
-              <div
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 cursor-pointer"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-              </div>
             </div>
 
-            {/* LOGIN BUTTON */}
+          </div>
+
+          {/* SIZES */}
+
+          <div>
+
+            <div className="flex flex-wrap gap-4">
+
+              {sizes.map((size, index) => (
+                <label
+                  key={index}
+                  className="inline-flex items-center space-x-2"
+                >
+                  <input
+                    type="checkbox"
+                    value={size}
+                    {...register("size", validateSchema.sizeValidator)}
+                  />
+                  <span>{size}</span>
+                </label>
+              ))}
+
+            </div>
+
+            {errors.size && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.size.message}
+              </p>
+            )}
+
+          </div>
+
+          {/* COLORS */}
+
+          <div>
+            <input
+              type="text"
+              placeholder="Colors (comma separated)"
+              {...register("colors", validateSchema.colorsValidator)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
+            />
+
+            {errors.colors && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.colors.message}
+              </p>
+            )}
+          </div>
+
+          {/* SKU */}
+
+          <div>
+            <input
+              type="text"
+              placeholder="SKU"
+              {...register("sku", validateSchema.skuValidator)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
+            />
+
+            {errors.sku && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.sku.message}
+              </p>
+            )}
+          </div>
+
+          {/* SUBMIT BUTTON */}
+
+          <div className="text-center mt-8">
+
             <button
               type="submit"
-              className="w-full bg-teal-700 text-white py-3 rounded-md hover:bg-teal-800 transition"
+              className="bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-3 rounded-lg transition"
             >
-              Login
+              Add Product
             </button>
-          </form>
 
-          {/* REGISTER LINK */}
-          <p className="text-center text-sm text-gray-500 mt-6">
-            Don't have an account?
-            <Link to="/register" className="text-teal-600 ml-1 font-medium">
-              Register
-            </Link>
-          </p>
-        </div>
+          </div>
+
+        </form>
       </div>
     </div>
   );
 }
 
-export default Login;
