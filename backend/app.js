@@ -7,6 +7,7 @@ const userRoutes = require("./src/routes/UserRoutes");
 const categoryRoutes = require("./src/routes/CategoryRoutes");
 const productRoutes = require("./src/routes/ProductRoutes");
 const addressRouter = require("./src/routes/AddressRoutes");
+const wishlistRoutes = require("./src/routes/WishlistRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -21,6 +22,7 @@ app.use("/user", userRoutes);
 app.use("/category", categoryRoutes);
 app.use("/product", productRoutes);
 app.use("/address", addressRouter);
+app.use("/wishlist", wishlistRoutes);
 
 app.get("/", (req, res) => {
   res.send("<h1>Home Page</h1>");
