@@ -3,6 +3,7 @@ const Product = require("../models/ProductModel");
 exports.addProduct = async (req, res) => {
   try {
     const { categoryId, title, description, price, quantity, size, colors, sku } = req.body;
+    console.log(categoryId, title, description, price, quantity, size, colors, sku)
 
     if (!categoryId || !title || !description || !price || !quantity || !size || !colors || !sku) {
       return res.status(400).json({
@@ -11,9 +12,12 @@ exports.addProduct = async (req, res) => {
       });
     }
 
+    console.log("Db Call perform")
     const createdProduct = await Product.create({
       categoryId, title, description, price, quantity, size, colors, sku
     });
+
+    console.log(createdProduct)
 
     res.status(201).json({
       success: true,

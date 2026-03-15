@@ -1,10 +1,17 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
+
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 export default function AddProduct() {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const [category, setCategory] = useState([]);
   const [selectedLevel1, setSelectedLevel1] = useState("");
   const [selectedLevel2, setSelectedLevel2] = useState("");
@@ -12,7 +19,81 @@ export default function AddProduct() {
 
   const sizes = ["S", "M", "L", "XL", "XXL"];
 
-  // Fetch categories from backend
+  /* ---------------- VALIDATION SCHEMA ---------------- */
+
+  const validateSchema = {
+    titleValidator: {
+      required: {
+        value: true,
+        message: "Product title is required",
+      },
+      minLength: {
+        value: 3,
+        message: "Title must be at least 3 characters",
+      },
+    },
+
+    descriptionValidator: {
+      required: {
+        value: true,
+        message: "Description is required",
+      },
+      minLength: {
+        value: 10,
+        message: "Description must be at least 10 characters",
+      },
+    },
+
+    priceValidator: {
+      required: {
+        value: true,
+        message: "Price is required",
+      },
+      min: {
+        value: 1,
+        message: "Price must be greater than 0",
+      },
+    },
+
+    quantityValidator: {
+      required: {
+        value: true,
+        message: "Quantity is required",
+      },
+      min: {
+        value: 1,
+        message: "Quantity must be at least 1",
+      },
+    },
+
+    colorsValidator: {
+      required: {
+        value: true,
+        message: "Colors are required",
+      },
+    },
+
+    skuValidator: {
+      required: {
+        value: true,
+        message: "SKU is required",
+      },
+      minLength: {
+        value: 3,
+        message: "SKU must be at least 3 characters",
+      },
+    },
+
+    sizeValidator: {
+      required: {
+        value: true,
+        message: "Select at least one size",
+      },
+    },
+  };
+
+  /* ---------------- FETCH CATEGORIES ---------------- */
+
   const getCategories = async () => {
     try {
       const response = await axios.get("/category/categories");
@@ -26,150 +107,277 @@ export default function AddProduct() {
     getCategories();
   }, []);
 
-  // Filter categories by level and parent
-  const lvl1FilteredCategory = category.filter(cat => cat.level === 1);
+  /* ---------------- FILTER CATEGORIES ---------------- */
+
+  const lvl1FilteredCategory = category.filter((cat) => cat.level === 1);
+
   const lvl2FilteredCategory = category.filter(
-    cat => cat.parentCategoryId && cat.parentCategoryId._id === selectedLevel1
-  );
-  const lvl3FilteredCategory = category.filter(
-    cat => cat.parentCategoryId && cat.parentCategoryId._id === selectedLevel2
+    (cat) =>
+      cat.parentCategoryId &&
+      cat.parentCategoryId._id === selectedLevel1
   );
 
-  // Form submit handler
+  const lvl3FilteredCategory = category.filter(
+    (cat) =>
+      cat.parentCategoryId &&
+      cat.parentCategoryId._id === selectedLevel2
+  );
+
+  /* ---------------- SUBMIT HANDLER ---------------- */
+
   const submitHandler = async (data) => {
-    data.colors = data.colors.split(",").map(color => color.trim());
-    // send the most specific categoryId
-    data.categoryId = selectedLevel3 || selectedLevel2 || selectedLevel1;
+
+    if (!selectedLevel1) {
+      toast.error("Please select a category");
+      return;
+    }
+
+    data.colors = data.colors.split(",").map((color) => color.trim());
+
+    data.categoryId =
+      selectedLevel3 || selectedLevel2 || selectedLevel1;
 
     try {
-      console.log(data)
+
       const response = await axios.post("/product/product", data);
+
       if (response.status === 201) {
         toast.success(response.data.message);
       }
+
     } catch (error) {
       toast.error(error.response.data.message);
     }
   };
 
   return (
-   <div className="bg-gray-100 w-full py-3">
-      <div className="bg-white rounded-2xl shadow-lg max-w-4xl w-full p-6 md:p-8 mx-auto">
-        <h2 className="text-3xl font-semibold text-teal-600 mb-8 text-center">Add Product</h2>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
+      <div className="bg-white rounded-2xl shadow-lg max-w-4xl w-full p-8 md:p-12">
 
-        <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
+        <h2 className="text-3xl font-semibold text-teal-600 mb-8 text-center">
+          Add Product
+        </h2>
 
-          {/* Title */}
-          <input
-            type="text"
-            {...register("title", { required: true })}
-            className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 ${errors.title ? "border-red-500" : "border-gray-300"}`}
-            placeholder="Product Title *"
-          />
-          {errors.title && <p className="text-red-500 text-sm mt-1">Title is required</p>}
+        <form
+          onSubmit={handleSubmit(submitHandler)}
+          className="space-y-6"
+        >
 
-          {/* Description */}
-          <input
-            type="text"
-            {...register("description", { required: true })}
-            className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 ${errors.description ? "border-red-500" : "border-gray-300"}`}
-            placeholder="Product Description *"
-          />
-          {errors.description && <p className="text-red-500 text-sm mt-1">Description is required</p>}
+          {/* TITLE */}
 
-          {/* Categories */}
+          <div>
+            <input
+              type="text"
+              placeholder="Product Title"
+              {...register("title", validateSchema.titleValidator)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
+            />
+
+            {errors.title && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.title.message}
+              </p>
+            )}
+          </div>
+
+          {/* DESCRIPTION */}
+
+          <div>
+            <input
+              type="text"
+              placeholder="Product Description"
+              {...register(
+                "description",
+                validateSchema.descriptionValidator
+              )}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
+            />
+
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
+
+          {/* CATEGORY */}
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
             <select
               value={selectedLevel1}
-              onChange={(e) => { setSelectedLevel1(e.target.value); setSelectedLevel2(""); setSelectedLevel3(""); }}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
+              onChange={(e) => {
+                setSelectedLevel1(e.target.value);
+                setSelectedLevel2("");
+                setSelectedLevel3("");
+              }}
+              className="border border-gray-300 rounded-lg px-4 py-3"
             >
-              <option value="">Select Category *</option>
-              {lvl1FilteredCategory.map(cat => (
-                <option key={cat._id} value={cat._id}>{cat.name}</option>
+              <option value="">Select Category</option>
+
+              {lvl1FilteredCategory.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
               ))}
             </select>
 
             <select
               value={selectedLevel2}
-              onChange={(e) => { setSelectedLevel2(e.target.value); setSelectedLevel3(""); }}
-              disabled={!selectedLevel1 || lvl2FilteredCategory.length === 0}
-              className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 ${(!selectedLevel1 || lvl2FilteredCategory.length === 0) ? "bg-gray-100 cursor-not-allowed" : "border-gray-300"}`}
+              onChange={(e) => {
+                setSelectedLevel2(e.target.value);
+                setSelectedLevel3("");
+              }}
+              disabled={!selectedLevel1}
+              className="border border-gray-300 rounded-lg px-4 py-3"
             >
-              <option value="">Select Subcategory *</option>
-              {lvl2FilteredCategory.map(cat => (
-                <option key={cat._id} value={cat._id}>{cat.name}</option>
+              <option value="">Select Subcategory</option>
+
+              {lvl2FilteredCategory.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
               ))}
             </select>
 
             <select
               value={selectedLevel3}
-              onChange={(e) => setSelectedLevel3(e.target.value)}
-              disabled={!selectedLevel2 || lvl3FilteredCategory.length === 0}
-              className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 ${(!selectedLevel2 || lvl3FilteredCategory.length === 0) ? "bg-gray-100 cursor-not-allowed" : "border-gray-300"}`}
+              onChange={(e) =>
+                setSelectedLevel3(e.target.value)
+              }
+              disabled={!selectedLevel2}
+              className="border border-gray-300 rounded-lg px-4 py-3"
             >
-              <option value="">Select Subcategory 2 *</option>
-              {lvl3FilteredCategory.map(cat => (
-                <option key={cat._id} value={cat._id}>{cat.name}</option>
+              <option value="">Select Subcategory 2</option>
+
+              {lvl3FilteredCategory.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
               ))}
             </select>
+
           </div>
 
-          {/* Price & Quantity */}
+          {/* PRICE + QUANTITY */}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input
-              type="number"
-              {...register("price", { required: true })}
-              className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 ${errors.price ? "border-red-500" : "border-gray-300"}`}
-              placeholder="Price *"
-            />
-            {errors.price && <p className="text-red-500 text-sm mt-1">Price is required</p>}
 
-            <input
-              type="number"
-              {...register("quantity", { required: true })}
-              className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 ${errors.quantity ? "border-red-500" : "border-gray-300"}`}
-              placeholder="Quantity *"
-            />
-            {errors.quantity && <p className="text-red-500 text-sm mt-1">Quantity is required</p>}
+            <div>
+              <input
+                type="number"
+                placeholder="Price"
+                {...register("price", validateSchema.priceValidator)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+              />
+
+              {errors.price && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.price.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="number"
+                placeholder="Quantity"
+                {...register(
+                  "quantity",
+                  validateSchema.quantityValidator
+                )}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3"
+              />
+
+              {errors.quantity && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.quantity.message}
+                </p>
+              )}
+            </div>
+
           </div>
 
-          {/* Sizes */}
-          <div className="flex flex-wrap gap-4">
-            {sizes.map((size, index) => (
-              <label key={index} className="inline-flex items-center space-x-2">
-                <input type="checkbox" {...register("size")} value={size} className="form-checkbox text-teal-600" />
-                <span>{size}</span>
-              </label>
-            ))}
+          {/* SIZES */}
+
+          <div>
+
+            <div className="flex flex-wrap gap-4">
+
+              {sizes.map((size, index) => (
+                <label
+                  key={index}
+                  className="inline-flex items-center space-x-2"
+                >
+                  <input
+                    type="checkbox"
+                    value={size}
+                    {...register("size", validateSchema.sizeValidator)}
+                  />
+                  <span>{size}</span>
+                </label>
+              ))}
+
+            </div>
+
+            {errors.size && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.size.message}
+              </p>
+            )}
+
           </div>
 
-          {/* Colors */}
-          <input
-            type="text"
-            {...register("colors", { required: true })}
-            className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 ${errors.colors ? "border-red-500" : "border-gray-300"}`}
-            placeholder="Colors (comma separated) *"
-          />
-          {errors.colors && <p className="text-red-500 text-sm mt-1">Colors are required</p>}
+          {/* COLORS */}
+
+          <div>
+            <input
+              type="text"
+              placeholder="Colors (comma separated)"
+              {...register("colors", validateSchema.colorsValidator)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
+            />
+
+            {errors.colors && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.colors.message}
+              </p>
+            )}
+          </div>
 
           {/* SKU */}
-          <input
-            type="text"
-            {...register("sku", { required: true })}
-            className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500 ${errors.sku ? "border-red-500" : "border-gray-300"}`}
-            placeholder="SKU *"
-          />
-          {errors.sku && <p className="text-red-500 text-sm mt-1">SKU is required</p>}
 
-          {/* Submit */}
-          <div className="text-center mt-4">
-            <button type="submit" className="bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-3 rounded-lg transition">
+          <div>
+            <input
+              type="text"
+              placeholder="SKU"
+              {...register("sku", validateSchema.skuValidator)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
+            />
+
+            {errors.sku && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.sku.message}
+              </p>
+            )}
+          </div>
+
+          {/* SUBMIT BUTTON */}
+
+          <div className="text-center mt-8">
+
+            <button
+              type="submit"
+              className="bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-3 rounded-lg transition"
+            >
               Add Product
             </button>
+
           </div>
+
         </form>
       </div>
     </div>
   );
 }
+
