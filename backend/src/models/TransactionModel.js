@@ -2,39 +2,39 @@ const mongoose = require("mongoose");
 
 const transactionSchema = new mongoose.Schema({
 
-    orderId:{
+    orderId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Order",
         required: true
     },
 
-    userId:{
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
 
-    paymentMethod:{
+    paymentMethod: {
         type: String,
-        enum: ["UPI","Card","COD"],
+        enum: ["UPI", "Card", "COD"],
         required: true
     },
 
-    amount:{
+    amount: {
         type: Number,
         required: true
     },
 
-    status:{
+    status: {
         type: String,
-        enum:["Success","Failed"],
+        enum: ["Success", "Failed"],
         required: true
     },
 
 
 
-},{
-    timestamps:true,
+}, {
+    timestamps: true,
 });
 
 module.exports = mongoose.model("Transaction", transactionSchema);

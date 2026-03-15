@@ -23,26 +23,6 @@ const sellerSchema = new mongoose.Schema(
       required: true,
     },
 
-    address: {
-      type: String,
-      required: true,
-    },
-
-    city: {
-      type: String,
-      required: true,
-    },
-
-    state: {
-      type: String,
-      required: true,
-    },
-
-    pincode: {
-      type: String,
-      required: true,
-    },
-
     isVerified: {
       type: Boolean,
       default: false,

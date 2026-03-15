@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["customer", "seller", "admin"],
       default: "customer",
-      toLowerCase: true,
+      lowercase: true
     },
     mobile: {
       type: String,
