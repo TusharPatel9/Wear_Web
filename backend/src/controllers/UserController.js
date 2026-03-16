@@ -2,6 +2,7 @@ const User = require("../models/UserModel");
 const Seller = require("../models/SellerModel");
 const bcrypt = require("bcrypt");
 const { mailSend } = require("../utils/MailSend");
+const Address = require("../models/AddressModel");
 
 exports.registerUser = async (req, res) => {
   try {
@@ -12,7 +13,7 @@ exports.registerUser = async (req, res) => {
       shopName,
       businessEmail,
       gstNumber,
-      address,
+      area,
       city,
       state,
       pincode,
@@ -47,14 +48,18 @@ exports.registerUser = async (req, res) => {
       const createSeller = await Seller.create({
         userId: createdUser._id,
         shopName,
-        address,
-        city,
-        state,
-        pincode,
         gstNumber,
         businessEmail,
       });
     }
+
+    const savedAddress = await Address.create({
+      userId:createdUser._id,
+      area,
+      city,
+      state,
+      pincode,
+    });
 
     await mailSend(createdUser.email, "Welcome", "Registration Successful");
 

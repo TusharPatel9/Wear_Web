@@ -77,7 +77,7 @@ function Register() {
       },
     },
 
-    addressValidator: {
+    areaValidator: {
       required: {
         value: true,
         message: "Address is required",
@@ -353,8 +353,8 @@ function Register() {
               <>
                 <input
                   type="text"
-                  placeholder="Address"
-                  {...register("address", validateSchema.addressValidator)}
+                  placeholder="Area"
+                  {...register("area", validateSchema.areaValidator)}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
                 />
 
