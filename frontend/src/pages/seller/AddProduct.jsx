@@ -1,11 +1,10 @@
-
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { MdOutlineAddPhotoAlternate } from "react-icons/md";
 
 export default function AddProduct() {
-
   const {
     register,
     handleSubmit,
@@ -13,6 +12,8 @@ export default function AddProduct() {
   } = useForm();
 
   const [category, setCategory] = useState([]);
+  const [images, setImages] = useState([]);
+  const [preview, setPreview] = useState([]); // preview URLs
   const [selectedLevel1, setSelectedLevel1] = useState("");
   const [selectedLevel2, setSelectedLevel2] = useState("");
   const [selectedLevel3, setSelectedLevel3] = useState("");
@@ -20,7 +21,6 @@ export default function AddProduct() {
   const sizes = ["S", "M", "L", "XL", "XXL"];
 
   /* ---------------- VALIDATION SCHEMA ---------------- */
-
   const validateSchema = {
     titleValidator: {
       required: {
@@ -93,7 +93,6 @@ export default function AddProduct() {
   };
 
   /* ---------------- FETCH CATEGORIES ---------------- */
-
   const getCategories = async () => {
     try {
       const response = await axios.get("/category/categories");
@@ -112,59 +111,126 @@ export default function AddProduct() {
   const lvl1FilteredCategory = category.filter((cat) => cat.level === 1);
 
   const lvl2FilteredCategory = category.filter(
-    (cat) =>
-      cat.parentCategoryId &&
-      cat.parentCategoryId._id === selectedLevel1
+    (cat) => cat.parentCategoryId && cat.parentCategoryId._id === selectedLevel1
   );
 
   const lvl3FilteredCategory = category.filter(
-    (cat) =>
-      cat.parentCategoryId &&
-      cat.parentCategoryId._id === selectedLevel2
+    (cat) => cat.parentCategoryId && cat.parentCategoryId._id === selectedLevel2
   );
 
   /* ---------------- SUBMIT HANDLER ---------------- */
 
   const submitHandler = async (data) => {
-
+    
     if (!selectedLevel1) {
       toast.error("Please select a category");
       return;
     }
 
     data.colors = data.colors.split(",").map((color) => color.trim());
-
-    data.categoryId =
-      selectedLevel3 || selectedLevel2 || selectedLevel1;
+    data.categoryId = selectedLevel3 || selectedLevel2 || selectedLevel1;
 
     try {
+      const formData = new FormData();
+      for (let key in data) {
+        if (Array.isArray(data[key])) {
+          data[key].forEach((item) => {
+            formData.append(key, item);
+          });
+        } else {
+          formData.append(key, data[key]);
+        }
+      }
 
-      const response = await axios.post("/product/product", data);
+      // ✅ Append images (IMPORTANT)
+      images.forEach((img) => {
+        formData.append("images", img);
+      });
+
+      const response = await axios.post("/product/product", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.status === 201) {
         toast.success(response.data.message);
       }
-
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Error uploading");
     }
+  };
+  
+  // image upload 
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+
+    if (files.length + preview.length > 5) {
+      alert("You can upload maximum 5 images");
+      return;
+    }
+
+    // Append new files
+    setImages((prev) => [...prev, ...files]);
+
+    // Generate preview URLs
+    const previewUrls = files.map((file) => URL.createObjectURL(file));
+
+    setPreview((prev) => [...prev, ...previewUrls]);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-2 py-4">
       <div className="bg-white rounded-2xl shadow-lg max-w-4xl w-full p-8 md:p-12">
-
-        <h2 className="text-3xl font-semibold text-teal-600 mb-8 text-center">
+        <h2 className="text-3xl font-semibold text-teal-600 mb-2 text-center">
           Add Product
         </h2>
 
-        <form
-          onSubmit={handleSubmit(submitHandler)}
-          className="space-y-6"
-        >
+        <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
+          
+          {/* images */}
+          <div className="w-full flex gap-3">
+            {/* Upload Box */}
+            <label className="w-24 h-24 flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-green-500 transition">
+              <span className="text-gray-400 text-2xl">
+                <MdOutlineAddPhotoAlternate />
+              </span>
+
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+            </label>
+
+            {/* Preview Section */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+              {preview.map((img, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={img}
+                    alt="preview"
+                    className="w-24 h-24 object-cover rounded-lg"
+                  />
+
+                  {/* Remove Button */}
+                  <button
+                    onClick={() => {
+                      setImages((prev) => prev.filter((_, i) => i !== index));
+                      setPreview((prev) => prev.filter((_, i) => i !== index));
+                    }}
+                    className="absolute top-1 right-1 bg-black text-white text-xs px-1 rounded"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* TITLE */}
-
           <div>
             <input
               type="text"
@@ -181,15 +247,11 @@ export default function AddProduct() {
           </div>
 
           {/* DESCRIPTION */}
-
           <div>
             <input
               type="text"
               placeholder="Product Description"
-              {...register(
-                "description",
-                validateSchema.descriptionValidator
-              )}
+              {...register("description", validateSchema.descriptionValidator)}
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
             />
 
@@ -201,9 +263,7 @@ export default function AddProduct() {
           </div>
 
           {/* CATEGORY */}
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
             <select
               value={selectedLevel1}
               onChange={(e) => {
@@ -242,9 +302,7 @@ export default function AddProduct() {
 
             <select
               value={selectedLevel3}
-              onChange={(e) =>
-                setSelectedLevel3(e.target.value)
-              }
+              onChange={(e) => setSelectedLevel3(e.target.value)}
               disabled={!selectedLevel2}
               className="border border-gray-300 rounded-lg px-4 py-3"
             >
@@ -256,13 +314,10 @@ export default function AddProduct() {
                 </option>
               ))}
             </select>
-
           </div>
 
           {/* PRICE + QUANTITY */}
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
             <div>
               <input
                 type="number"
@@ -282,10 +337,7 @@ export default function AddProduct() {
               <input
                 type="number"
                 placeholder="Quantity"
-                {...register(
-                  "quantity",
-                  validateSchema.quantityValidator
-                )}
+                {...register("quantity", validateSchema.quantityValidator)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-3"
               />
 
@@ -295,15 +347,12 @@ export default function AddProduct() {
                 </p>
               )}
             </div>
-
           </div>
 
           {/* SIZES */}
 
           <div>
-
             <div className="flex flex-wrap gap-4">
-
               {sizes.map((size, index) => (
                 <label
                   key={index}
@@ -317,15 +366,11 @@ export default function AddProduct() {
                   <span>{size}</span>
                 </label>
               ))}
-
             </div>
 
             {errors.size && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.size.message}
-              </p>
+              <p className="text-red-500 text-sm mt-1">{errors.size.message}</p>
             )}
-
           </div>
 
           {/* COLORS */}
@@ -356,28 +401,22 @@ export default function AddProduct() {
             />
 
             {errors.sku && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.sku.message}
-              </p>
+              <p className="text-red-500 text-sm mt-1">{errors.sku.message}</p>
             )}
           </div>
 
           {/* SUBMIT BUTTON */}
 
-          <div className="text-center mt-8">
-
+          <div className="text-center mt-6">
             <button
               type="submit"
               className="bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-3 rounded-lg transition"
             >
               Add Product
             </button>
-
           </div>
-
         </form>
       </div>
     </div>
   );
 }
-

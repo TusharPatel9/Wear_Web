@@ -3,7 +3,6 @@ const uploadToCloudinary = require("../utils/Cloudinary");
 
 exports.addProduct = async (req, res) => {
   try {
-    // console.log(req.files);
     const {
       categoryId,
       title,
@@ -14,16 +13,6 @@ exports.addProduct = async (req, res) => {
       colors,
       sku,
     } = req.body;
-    console.log(
-      categoryId,
-      title,
-      description,
-      price,
-      quantity,
-      size,
-      colors,
-      sku,
-    );
 
     // if (!title || !description || !price || !quantity || !size || !colors || !sku)  {
     //   return res.status(400).json({
@@ -32,58 +21,37 @@ exports.addProduct = async (req, res) => {
     //   });
     // }
 
-    
-    const imagePaths = [];
+    const imageUrls = [];
 
     for (let file of req.files) {
       const result = await uploadToCloudinary(file.path);
-      imagePaths.push(result.secure_url);
+      imageUrls.push(result.secure_url);
     }
 
-
-    console.log("Db Call perform");
-
+    console.log(imageUrls);
+    
     try {
-  const createdProduct = await Product.create({
-    categoryId,
-    title,
-    description,
-    price,
-    quantity,
-    size,
-    colors,
-    sku,
-    imagePaths: cloudinaryResponse.secure_url
-  });
+      const createdProduct = await Product.create({
+        categoryId,
+        title,
+        description,
+        price,
+        quantity,
+        size,
+        colors,
+        sku,
+        imagePaths: imageUrls,
+      });
 
-} catch (error) {
-  console.error("Error while:", error);
-
-  res.status(500).json({
-    success: false,
-    message: "Error while creating",
-    error: error.message
-  });
-}
-    // const createdProduct = await Product.create({
-    //   categoryId,
-    //   title,
-    //   description,
-    //   price,
-    //   quantity,
-    //   size,
-    //   colors,
-    //   sku,
-    //   imagePaths:cloudinaryResponse.secure_url
-    // });
-
-    //console.log(createdProduct);
-
-    res.status(201).json({
-      success: true,
-      message: "Product created successfully",
-      data: createdProduct,
-    });
+      res.status(201).json({
+        success: true,
+        message: "Product created successfully",
+        data: createdProduct,
+      });
+      
+    } catch (error) {
+      console.log("error", error);
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
