@@ -10,7 +10,7 @@ const productSchema = new mongoose.Schema({
     categoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
-        required: true,
+       // required: true,
     },
 
     title: {
@@ -45,7 +45,7 @@ const productSchema = new mongoose.Schema({
         type: [String]
     },
 
-    images: {
+    imagePaths: {
         type: [String],
         // required: true
     },

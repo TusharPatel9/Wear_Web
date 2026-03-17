@@ -1,23 +1,83 @@
 const Product = require("../models/ProductModel");
+const uploadToCloudinary = require("../utils/Cloudinary");
 
 exports.addProduct = async (req, res) => {
   try {
-    const { categoryId, title, description, price, quantity, size, colors, sku } = req.body;
-    console.log(categoryId, title, description, price, quantity, size, colors, sku)
+    // console.log(req.files);
+    const {
+      categoryId,
+      title,
+      description,
+      price,
+      quantity,
+      size,
+      colors,
+      sku,
+    } = req.body;
+    console.log(
+      categoryId,
+      title,
+      description,
+      price,
+      quantity,
+      size,
+      colors,
+      sku,
+    );
 
-    if (!categoryId || !title || !description || !price || !quantity || !size || !colors || !sku) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
+    // if (!title || !description || !price || !quantity || !size || !colors || !sku)  {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "All fields are required",
+    //   });
+    // }
+
+    
+    const imagePaths = [];
+
+    for (let file of req.files) {
+      const result = await uploadToCloudinary(file.path);
+      imagePaths.push(result.secure_url);
     }
 
-    console.log("Db Call perform")
-    const createdProduct = await Product.create({
-      categoryId, title, description, price, quantity, size, colors, sku
-    });
 
-    console.log(createdProduct)
+    console.log("Db Call perform");
+
+    try {
+  const createdProduct = await Product.create({
+    categoryId,
+    title,
+    description,
+    price,
+    quantity,
+    size,
+    colors,
+    sku,
+    imagePaths: cloudinaryResponse.secure_url
+  });
+
+} catch (error) {
+  console.error("Error while:", error);
+
+  res.status(500).json({
+    success: false,
+    message: "Error while creating",
+    error: error.message
+  });
+}
+    // const createdProduct = await Product.create({
+    //   categoryId,
+    //   title,
+    //   description,
+    //   price,
+    //   quantity,
+    //   size,
+    //   colors,
+    //   sku,
+    //   imagePaths:cloudinaryResponse.secure_url
+    // });
+
+    //console.log(createdProduct);
 
     res.status(201).json({
       success: true,
