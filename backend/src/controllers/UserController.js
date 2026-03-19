@@ -54,7 +54,7 @@ exports.registerUser = async (req, res) => {
     }
 
     const savedAddress = await Address.create({
-      userId:createdUser._id,
+      userId: createdUser._id,
       area,
       city,
       state,
@@ -97,10 +97,15 @@ exports.loginUser = async (req, res) => {
     const isMatched = await bcrypt.compare(password, foundUser.password);
 
     if (isMatched) {
+      const token = jwt.sign(foundUser.toObject(), process.env.JWT_SECRET, {
+        expiresIn: "2h",
+      });
+
       return res.status(200).json({
         success: true,
         message: "login Sucessfully",
-        data: foundUser,
+        token: token,
+        role: foundUser.role,
       });
     } else {
       //401 Unauthorized
