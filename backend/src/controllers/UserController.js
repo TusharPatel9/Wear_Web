@@ -18,22 +18,31 @@ exports.registerUser = async (req, res) => {
       city,
       state,
       pincode,
-      isVerified,
       role,
     } = req.body;
 
     if (!name || !email || !password) {
-      return res.json({
-        message: "All fields are required",
+      return res.status(400).json({
+        message: "Name, email and password are required",
       });
     }
 
-    const user = await User.findOne({ email });
+    const existingUser = await User.findOne({ email });
 
-    if (user) {
-      return res.json({
+    if (existingUser) {
+      return res.status(409).json({
         message: "User is already registered",
       });
+    }
+
+    const userRole = role || "customer";
+
+    if (userRole === "seller") {
+      if (!shopName || !businessEmail || !gstNumber || !area || !city || !state || !pincode) {
+        return res.status(400).json({
+          message: "All seller fields are required",
+        });
+      }
     }
 
     const encryptedPass = await bcrypt.hash(password, 10);
@@ -42,37 +51,44 @@ exports.registerUser = async (req, res) => {
       name,
       email,
       password: encryptedPass,
-      role: role || "customer",
+      role: userRole,
     });
 
-    if (role === "seller") {
-      const createSeller = await Seller.create({
+    if (userRole === "seller") {
+      await Seller.create({
         userId: createdUser._id,
         shopName,
         gstNumber,
         businessEmail,
       });
+
+      await Address.create({
+        userId: createdUser._id,
+        area,
+        city,
+        state,
+        pincode,
+      });
     }
 
-    const savedAddress = await Address.create({
-      userId: createdUser._id,
-      area,
-      city,
-      state,
-      pincode,
-    });
+    try {
+      await mailSend(createdUser.email, "Welcome", "Registration Successful");
+    } catch (err) {
+      console.log("Mail error:", err);
+    }
 
-    await mailSend(createdUser.email, "Welcome", "Registration Successful");
+    const userResponse = createdUser.toObject();
+    delete userResponse.password;
 
     res.status(201).json({
-      message: "registered successfully",
-      data: createdUser,
-      role: role,
+      message: "Registered successfully",
+      data: userResponse,
     });
+
   } catch (error) {
     res.status(500).json({
       message: "Error while registering user",
-      error: error,
+      error,
     });
   }
 };

@@ -16,6 +16,7 @@ function Login() {
   } = useForm();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const validateSchema = {
     emailValidator: {
@@ -39,36 +40,50 @@ function Login() {
 
   async function onSubmitHandler(data) {
     try {
-      console.log(data);
+      setLoading(true);
+
       const response = await axios.post("/user/login", data);
-      console.log(response);
+
+      console.log("response:", response);
       if (response.status == 200) {
-        console.log(response.data);
-        const { role, message } = response.data;
+        console.log("response data:", response.data);
+
+        const { role, message, token } = response.data;
+
         toast.success(message);
 
-        // localStorage.setItem()
-        // localStorage.setItem()
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", role);
 
+        console.log(role);
+        const userRole = role?.trim().toLowerCase();
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-        console.log("ROLE:", role);
-
-        switch (role) {
+        // if (role === "customer") navigate("/");
+        // else if (role === "seller") navigate("/seller");
+        // else if (role === "admin") navigate("/admin");
+        // else navigate("/login");
+        switch (userRole) {
           case "customer":
             navigate("/");
             break;
 
           case "seller":
-            navigate("/seller/dashboard");
+            navigate("/seller");
             break;
 
           case "admin":
-            navigate("/admin/dashboard");
+            navigate("/admin");
             break;
+
+          default:
+            navigate("/");
         }
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   }
 

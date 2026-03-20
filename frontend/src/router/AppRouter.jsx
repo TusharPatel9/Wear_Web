@@ -12,6 +12,7 @@ import AdminLayout from "../components/Admin/AdminLayout";
 import AdminDashboard from "../components/Admin/AdminDashboard";
 import AddProduct from "../pages/seller/AddProduct";
 import Order from "../components/Seller/Order";
+import ProtectedRoutes from "../components/ProtectedRoutes";
 
 const router = createBrowserRouter([
   {
@@ -30,26 +31,28 @@ const router = createBrowserRouter([
 
   {
     path: "/seller",
-    element: <SellerLayout />,
+    element: (
+      <ProtectedRoutes userRoles={["seller"]}>
+        <SellerLayout />
+      </ProtectedRoutes>
+    ),
     children: [
-      {
-        path: "dashboard",
-        element: <div>Seller Dashboard</div>,
-      },
-      {path:"addproduct", element:<AddProduct/>},
-      {path:"orders", element:<Order/>}
-
+      { index: true, element: <div>Seller Dashboard</div> },
+      { path: "addproduct", element: <AddProduct /> },
+      { path: "orders", element: <Order /> },
     ],
   },
 
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoutes userRoles={["admin"]}>
+        <AdminLayout />
+      </ProtectedRoutes>
+    ),
     children: [
-      {
-        path: "dashboard",
-        element: <AdminDashboard />,
-      },
+      { path: "dashboard", element: <AdminDashboard /> },
+      // {path: "dashboard",element: <AdminDashboard />},
     ],
   },
 ]);

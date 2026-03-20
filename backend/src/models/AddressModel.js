@@ -9,19 +9,19 @@ const addressSchema = new mongoose.Schema(
     },
     area: {
       type: String,
-      required: true,
+      // required: true,
     },
     city: {
       type: String,
-      required: true,
+      // required: true,
     },
     state: {
       type: String,
-      required: true,
+      // required: true,
     },
     pincode: {
       type: String,
-      required: true,
+      // required: true,
     },
     mobile: {
       type: String,

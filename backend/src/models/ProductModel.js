@@ -4,14 +4,14 @@ const productSchema = new mongoose.Schema(
   {
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Seller",
+      ref: "User",
       // required: true,
     },
 
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
+      // required: true,
     },
 
     title: {

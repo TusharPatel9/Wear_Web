@@ -115,7 +115,7 @@ function Register() {
       data.role = role;
       console.log(data);
       const response = await axios.post("/user/register", data);
-      console.log(response);
+      console.log("Response", response);
       if (response.status === 201) {
         toast.success(response.data.message);
         navigate("/login");
