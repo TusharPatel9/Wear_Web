@@ -13,6 +13,7 @@ import AdminDashboard from "../components/Admin/AdminDashboard";
 import AddProduct from "../pages/seller/AddProduct";
 import Order from "../components/Seller/Order";
 import ProtectedRoutes from "../components/ProtectedRoutes";
+import Products from "../pages/seller/Products"
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
       { path:"dashboard", element: <div>Seller Dashboard</div> },
       { path: "addproduct", element: <AddProduct /> },
       { path: "orders", element: <Order /> },
+      {path:"products",element: <Products/>}
     ],
   },
 

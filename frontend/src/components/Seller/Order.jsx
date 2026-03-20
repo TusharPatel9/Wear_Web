@@ -1,226 +1,3 @@
-// import React, { useState } from 'react'
-
-// export default function Order() {
-
-// const orders = [
-//   {
-//     _id: "order1",
-
-//     userId: {
-//       _id: "user1",
-//       name: "Raam",
-//       mobile: "9033447830",
-//       email: "raam@gmail.com",
-//     },
-
-//     addressId: {
-//       name: "Raam",
-//       area: "Gujarat Unity",
-//       city: "Rajkot",
-//       state: "Gujarat",
-//       pincode: "360001",
-//     },
-
-//     sellerId: {
-//       _id: "seller1",
-//       name: "Demo Seller",
-//     },
-
-//     items: [
-//       {
-//         productId: {
-//           _id: "prod1",
-//           title:
-//             "Boult Mirage 1.39 Screen Smartwatch",
-//           price: 2299,
-//           colors: ["Gold"],
-//           size: ["FREE"],
-//           imagePaths: [
-//             "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=200",
-//           ],
-//         },
-
-//         quantity: 1,
-//         price: 2299,
-//       },
-//     ],
-
-//     totalAmount: 2299,
-//     orderStatus: "Pending",
-//     paymentStatus: "Paid",
-
-//     orderDate: "2026-03-19T10:00:00Z",
-//   },
-
-//   {
-//     _id: "order2",
-
-//     userId: {
-//       _id: "user2",
-//       name: "Raamu Chacha",
-//       mobile: "9133447810",
-//       email: "raamu@gmail.com",
-//     },
-
-//     addressId: {
-//       name: "Raamu Chacha",
-//       area: "Street 1 2 3",
-//       city: "Rajkot",
-//       state: "Gujarat",
-//       pincode: "360001",
-//     },
-
-//     sellerId: {
-//       _id: "seller1",
-//       name: "Demo Seller",
-//     },
-
-//     items: [
-//       {
-//         productId: {
-//           _id: "prod2",
-//           title: "Embroidered Bollywood Net Saree (Red)",
-//           price: 1599,
-//           colors: ["Red"],
-//           size: ["FREE"],
-//           imagePaths: [
-//             "https://images.unsplash.com/photo-1593032465171-8c8f0f5d1d02?w=200",
-//           ],
-//         },
-
-//         quantity: 1,
-//         price: 1599,
-//       },
-//     ],
-
-//     totalAmount: 1599,
-//     orderStatus: "Pending",
-//     paymentStatus: "Unpaid",
-
-//     orderDate: "2026-03-18T09:30:00Z",
-//   },
-// ];
-//   const [ordersData, setOrdersData] = useState(orders);
-//   const [activeSelect, setActiveSelect] = useState(null);
-//   const [status, setStatus] = useState("Pending");
-
-
-//   const handleStatusChange = (orderId, newStatus) => {
-//     const updated = ordersData.map((order) =>
-//       order._id === orderId
-//         ? { ...order, orderStatus: newStatus }
-//         : order
-//     );
-
-//     setOrdersData(updated);
-//     setActiveSelect(null); // hide select after change
-//     setStatus(newStatus)
-//   };
-//   return (
-//     <div className='p-4 bg-gray-100'>
-//       {/* Header */}
-//       <div className='grid grid-cols-5 bg-black rounded-md text-white p-3 font-semibold gap-10'>
-//         <p>OrderId</p>
-//         <p>Products</p>
-//         <p>Shipping Address</p>
-//         <p>Order Status</p>
-//         <p>Update</p>
-//       </div>
-//       {
-//         orders.map(order => (
-//           <div className='grid grid-cols-5 gap-4'>
-//             {/* OrderId */}
-//             <p>{order._id}</p>
-
-//             {/* Products */}
-//             <div>
-//               {
-//                 order?.items?.map(item => (
-
-//                   <div className='flex gap-3'>
-//                     {console.log(item)}
-//                     <img className='h-30 w-20 object-cover' src={item.productId.imagePaths[0]} />
-//                     <div>
-//                       <p>Title: {item.productId.title}</p>
-//                       <p>Price: {item.productId.price}</p>
-//                       <p>Colors: {item.productId.colors[0]}</p>
-//                       <p>Size: {item.productId.size[0]}</p>
-//                     </div>
-//                   </div>
-//                 ))
-//               }
-//             </div>
-
-//             {/* Shipping Address */}
-//             <div>
-//               <p>{order.addressId.name}</p>
-//               <p>{order.addressId.area}</p>
-//               <p>{order.addressId.city}</p>
-//               <p>{order.addressId.state} - <span>{order.addressId.pincode}</span></p>
-//             </div>
-//             <div className="flex items-center gap-2">
-
-//               {/* Current Status */}
-//               <span className="px-3 py-1 border rounded-full text-yellow-500">
-//                 {status}
-//               </span>
-
-//               {/* Button */}
-//               <button
-//                 onClick={() =>
-//                   setActiveSelect(activeSelect === order._id ? null : order._id)
-//                 }
-//                 className="text-green-600"
-//               >
-//                 STATUS
-//               </button>
-
-//               {/* Select Dropdown */}
-//               {activeSelect === order._id && (
-//                 <select
-//                   value={order.orderStatus}
-//                   onChange={(e) =>
-//                     handleStatusChange(order._id, e.target.value)
-//                   }
-//                   className="border p-2 rounded"
-//                 >
-//                   <option value="PENDING">PENDING</option>
-//                   <option value="PLACED">PLACED</option>
-//                   <option value="CONFIRMED">CONFIRMED</option>
-//                   <option value="SHIPPED">SHIPPED</option>
-//                   <option value="DELIVERED">DELIVERED</option>
-//                 </select>
-//               )}
-
-//             </div>
-//           </div>
-
-
-
-
-
-//         ))
-//       }
-//     </div>
-//   )
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState } from "react";
 
 export default function Order() {
@@ -312,9 +89,7 @@ export default function Order() {
 
   const handleStatusChange = (orderId, newStatus) => {
     const updated = ordersData.map((order) =>
-      order._id === orderId
-        ? { ...order, orderStatus: newStatus }
-        : order
+      order._id === orderId ? { ...order, orderStatus: newStatus } : order,
     );
 
     setOrdersData(updated);
@@ -336,16 +111,10 @@ export default function Order() {
 
       {/* Orders */}
       {ordersData.map((order) => (
-        <div
-          key={order._id}
-          className="bg-white mt-3 p-4 rounded-md shadow-sm"
-        >
+        <div key={order._id} className="bg-white mt-3 p-4 rounded-md shadow-sm">
           <div className="grid md:grid-cols-[1fr_2fr_1.5fr_1fr_1fr] gap-6 items-start">
-
             {/* Order ID */}
-            <p className="text-md text-gray-700 break-all">
-              {order._id}
-            </p>
+            <p className="text-md text-gray-700 break-all">{order._id}</p>
 
             {/* Products */}
             <div className="space-y-3">
@@ -357,9 +126,7 @@ export default function Order() {
                     alt=""
                   />
                   <div className="text-md">
-                    <p className="font-medium">
-                      {item.productId.title}
-                    </p>
+                    <p className="font-medium">{item.productId.title}</p>
                     <p>Price: ₹{item.productId.price}</p>
                     <p>Color: {item.productId.colors[0]}</p>
                     <p>Size: {item.productId.size[0]}</p>
@@ -374,12 +141,9 @@ export default function Order() {
               <p>{order.addressId.area}</p>
               <p>{order.addressId.city}</p>
               <p>
-                {order.addressId.state} -{" "}
-                {order.addressId.pincode}
+                {order.addressId.state} - {order.addressId.pincode}
               </p>
-              <p className="mt-1 font-medium">
-                Mobile: {order.userId.mobile}
-              </p>
+              <p className="mt-1 font-medium">Mobile: {order.userId.mobile}</p>
             </div>
 
             {/* Status */}
@@ -390,12 +154,12 @@ export default function Order() {
                     order.orderStatus === "PENDING"
                       ? "text-yellow-600 border-yellow-400 bg-yellow-50"
                       : order.orderStatus === "CONFIRMED"
-                      ? "text-green-600 border-green-400 bg-green-50"
-                      : order.orderStatus === "SHIPPED"
-                      ? "text-blue-600 border-blue-400 bg-blue-50"
-                      : order.orderStatus === "DELIVERED"
-                      ? "text-purple-600 border-purple-400 bg-purple-50"
-                      : "text-gray-600 border-gray-300 bg-gray-50"
+                        ? "text-green-600 border-green-400 bg-green-50"
+                        : order.orderStatus === "SHIPPED"
+                          ? "text-blue-600 border-blue-400 bg-blue-50"
+                          : order.orderStatus === "DELIVERED"
+                            ? "text-purple-600 border-purple-400 bg-purple-50"
+                            : "text-gray-600 border-gray-300 bg-gray-50"
                   }
                 `}
               >
@@ -407,9 +171,7 @@ export default function Order() {
             <div className="relative">
               <button
                 onClick={() =>
-                  setActiveSelect(
-                    activeSelect === order._id ? null : order._id
-                  )
+                  setActiveSelect(activeSelect === order._id ? null : order._id)
                 }
                 className="text-green-600 font-semibold text-md"
               >
