@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
+import axiosInstance from "../../AxiosInstance";
 
 export default function AddProduct() {
   const {
@@ -95,7 +96,7 @@ export default function AddProduct() {
   /* ---------------- FETCH CATEGORIES ---------------- */
   const getCategories = async () => {
     try {
-      const response = await axios.get("/category/categories");
+      const response = await axiosInstance.get("/category/categories");
       setCategory(response.data.data);
     } catch (error) {
       console.log(error);
@@ -147,7 +148,7 @@ export default function AddProduct() {
         formData.append("images", img);
       });
 
-      const response = await axios.post("/product/product", formData, {
+      const response = await axiosInstance.post("/product/product", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

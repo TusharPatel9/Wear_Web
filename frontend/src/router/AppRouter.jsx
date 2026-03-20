@@ -34,10 +34,10 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoutes userRoles={["seller"]}>
         <SellerLayout />
-      </ProtectedRoutes>
+      </ProtectedRoutes> 
     ),
     children: [
-      { index: true, element: <div>Seller Dashboard</div> },
+      { path:"dashboard", element: <div>Seller Dashboard</div> },
       { path: "addproduct", element: <AddProduct /> },
       { path: "orders", element: <Order /> },
     ],

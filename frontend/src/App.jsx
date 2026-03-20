@@ -3,7 +3,7 @@ import {ToastContainer, Bounce} from 'react-toastify'
 import axios from 'axios'
 function App() {
 
-  axios.defaults.baseURL = "http://localhost:8000"
+  // axios.defaults.baseURL = "http://localhost:8000"
   return (
     <div>
       <AppRouter />

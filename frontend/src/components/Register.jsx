@@ -5,6 +5,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import axiosInstance from "../AxiosInstance";
 
 function Register() {
   const navigate = useNavigate();
@@ -114,7 +115,7 @@ function Register() {
     try {
       data.role = role;
       console.log(data);
-      const response = await axios.post("/user/register", data);
+      const response = await axiosInstance.post("/user/register", data);
       console.log("Response", response);
       if (response.status === 201) {
         toast.success(response.data.message);

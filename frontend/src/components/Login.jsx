@@ -5,6 +5,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import axiosInstance from "../AxiosInstance";
 
 function Login() {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ function Login() {
     try {
       setLoading(true);
 
-      const response = await axios.post("/user/login", data);
+      const response = await axiosInstance.post("/user/login", data);
 
       console.log("response:", response);
       if (response.status == 200) {
