@@ -11,6 +11,7 @@ import SellerLayout from "../components/Seller/SellerLayout";
 import AdminLayout from "../components/Admin/AdminLayout";
 import AdminDashboard from "../components/Admin/AdminDashboard";
 import AddProduct from "../pages/seller/AddProduct";
+import Order from "../components/Seller/Order";
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,9 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <div>Seller Dashboard</div>,
       },
-      {path:"addproduct", element:<AddProduct/>}
+      {path:"addproduct", element:<AddProduct/>},
+      {path:"orders", element:<Order/>}
+
     ],
   },
 

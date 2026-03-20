@@ -3,6 +3,7 @@ const Seller = require("../models/SellerModel");
 const bcrypt = require("bcrypt");
 const { mailSend } = require("../utils/MailSend");
 const Address = require("../models/AddressModel");
+const jwt = require("jsonwebtoken");
 
 exports.registerUser = async (req, res) => {
   try {

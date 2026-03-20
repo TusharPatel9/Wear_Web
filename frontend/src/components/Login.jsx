@@ -44,7 +44,7 @@ function Login() {
       console.log(response);
       if (response.status == 200) {
         console.log(response.data);
-        const { role, message } = response.data.data;
+        const { role, message } = response.data;
         toast.success(message);
 
         // localStorage.setItem()
