@@ -155,11 +155,21 @@ exports.getProductBySellerId = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const productId = req.params.id;
+
+    const imageUrls = [];
+
+    for (let file of req.files) {
+      const result = await uploadToCloudinary(file.path);
+      imageUrls.push(result.secure_url);
+    }
+
     const updatedProduct = await Product.findByIdAndUpdate(
       { _id: productId },
-      req.body,
+     {... req.body, imagePaths: imageUrls},
       { returnDocument: "after" }
     );
+
+
     if (!updatedProduct) {
       return res.status(400).json({
         success: false,
