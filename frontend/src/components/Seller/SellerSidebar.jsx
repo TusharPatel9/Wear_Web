@@ -34,10 +34,9 @@ function SellerSidebar() {
             to={item.path}
             className={({ isActive }) =>
               `flex items-center gap-4 px-5 py-3 text-[16px]
-              ${
-                isActive
-                  ? "bg-teal-600 text-white rounded-full"
-                  : "text-teal-600"
+              ${isActive
+                ? "bg-teal-600 text-white rounded-full"
+                : "text-teal-600"
               }`
             }
           >
@@ -50,13 +49,12 @@ function SellerSidebar() {
       {/* Bottom */}
       <div className="px-5 pb-6 flex flex-col gap-4">
         <NavLink
-          to="account"
+          to="profile"
           className={({ isActive }) =>
             `flex items-center gap-4 px-5 py-3 text-[16px]
-            ${
-              isActive
-                ? "bg-teal-600 text-white rounded-full"
-                : "text-teal-600"
+            ${isActive
+              ? "bg-teal-600 text-white rounded-full"
+              : "text-teal-600"
             }`
           }
         >
@@ -65,7 +63,11 @@ function SellerSidebar() {
         </NavLink>
 
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => {
+            { localStorage.removeItem("token") }
+            { localStorage.removeItem("role") }
+            navigate("/login")
+          }}
           className="flex items-center gap-4 px-5 py-3 text-teal-600"
         >
           <MdLogout className="text-xl" />

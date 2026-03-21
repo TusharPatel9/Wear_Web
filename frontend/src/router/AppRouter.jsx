@@ -15,6 +15,7 @@ import ProtectedRoutes from "../components/ProtectedRoutes";
 import AddProduct from "../pages/seller/AddProduct";
 import Products from "../pages/seller/Products";
 import UpdateProduct from "../pages/seller/UpdateProduct";
+import SellerProfile from "../pages/seller/SellerProfile";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,7 @@ const router = createBrowserRouter([
       { path: "updateproduct/:id", element: <UpdateProduct /> },
       { path: "orders", element: <Order /> },
       { path: "products", element: <Products /> },
+      { path: "profile", element: <SellerProfile /> },
     ],
   },
 

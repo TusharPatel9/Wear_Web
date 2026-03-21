@@ -27,6 +27,20 @@ const sellerSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    bankDetails: {
+      name: {
+        type: String,
+      },
+      ifscCode: {
+        type: String
+      },
+      accountNumber: {
+        type: String,
+        min: 12,
+        max: 12
+      }
+    }
   },
   {
     timestamps: true,

@@ -138,3 +138,36 @@ exports.loginUser = async (req, res) => {
     });
   }
 };
+
+
+exports.getUserDetail = async (req, res) => {
+  try {
+    const id = req.user._id;
+
+    const fetchedUser = await User.findById(id);
+    const fetchedSeller = await Seller.findOne({ userId: id });
+    const fetchedAddress = await Address.findOne({ userId: id });
+
+
+    if (!fetchedUser || !fetchedSeller || !fetchedAddress) {
+      res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const userObj = fetchedUser.toObject();
+    delete userObj.password;
+
+    res.status(200).json({
+      success: true,
+      message: "User fetched successfully",
+      data: {userObj, fetchedSeller, fetchedAddress}
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error While fetching the User",
+    });
+  }
+}
