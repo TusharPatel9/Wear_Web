@@ -156,38 +156,106 @@ exports.updateProduct = async (req, res) => {
   try {
     const productId = req.params.id;
 
-    const imageUrls = [];
+    // ✅ 1. Find existing product
+    const product = await Product.findById(productId);
 
-    for (let file of req.files) {
-      const result = await uploadToCloudinary(file.path);
-      imageUrls.push(result.secure_url);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
     }
 
+    let updatedImages = [...product.imagePaths];
+
+    // ✅ 2. REMOVE IMAGES
+    if (req.body.removeImages) {
+      let removeImages = req.body.removeImages;
+
+      // convert string → array
+      if (typeof removeImages === "string") {
+        removeImages = JSON.parse(removeImages);
+      }
+
+      updatedImages = updatedImages.filter(
+        (img) => !removeImages.includes(img)
+      );
+
+      // 🔥 OPTIONAL: delete from Cloudinary
+      // for (let img of removeImages) {
+      //   await deleteFromCloudinary(img);
+      // }
+    }
+
+    // ✅ 3. ADD NEW IMAGES
+    if (req.files && req.files.length > 0) {
+      for (let file of req.files) {
+        const result = await uploadToCloudinary(file.path);
+        updatedImages.push(result.secure_url);
+      }
+    }
+
+    // ✅ 4. Prepare update data
+    const updateData = {
+      ...req.body,
+      imagePaths: updatedImages,
+    };
+
+    // remove unwanted field
+    delete updateData.removeImages;
+
+    // ✅ convert colors if needed
+    if (updateData.colors && typeof updateData.colors === "string") {
+      updateData.colors = updateData.colors.split(",");
+    }
+
+    // ✅ 5. Update product
     const updatedProduct = await Product.findByIdAndUpdate(
-      { _id: productId },
-     {... req.body, imagePaths: imageUrls},
+      productId,
+      updateData,
       { returnDocument: "after" }
     );
 
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      data: updatedProduct,
+    });
+  } catch (error) {
+    console.error("Update error:", error);
 
-    if (!updatedProduct) {
-      return res.status(400).json({
+    res.status(500).json({
+      success: false,
+      message: "Error while updating product",
+    });
+  }
+};
+// get product by product ID single product
+exports.getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const fetchedProduct = await Product.findById(id);
+
+    // Handle empty result
+    if (!fetchedProduct) {
+      return res.status(404).json({
         success: false,
-        message: "No Product Found with this ID",
+        message: "No products found for this id",
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "Product updated Successfully",
-      data: updatedProduct,
+      message: "Products fetched successfully",
+      data: fetchedProduct,
     });
+    console.log(fetchedProduct);
   } catch (error) {
+    console.error("Error fetching products:", error);
+
     res.status(500).json({
       success: false,
-      message: "Error While Updating Product",
+      message: "Error while fetching products",
     });
   }
 };
-
-// get product by product ID single product

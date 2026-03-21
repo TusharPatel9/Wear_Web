@@ -12,8 +12,8 @@ function ProtectedRoutes({ children, userRoles }) {
     setLoading(false);
   }, []);
 
-  if(loading){
-    return <h1>Loading</h1>
+  if (loading) {
+    return <h1>Loading</h1>;
   }
   if (!token) {
     return <Navigate to="/login" />;
@@ -22,8 +22,6 @@ function ProtectedRoutes({ children, userRoles }) {
   if (!userRoles.includes(role)) {
     return <Navigate to="/login" />;
   }
-
-  
 
   return children;
 }

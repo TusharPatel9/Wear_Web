@@ -4,6 +4,7 @@ const {
   deleteProduct,
   getProductBySellerId,
   updateProduct,
+  getProductById,
 } = require("../controllers/ProductController");
 const { validateToken } = require("../middleware/AuthMiddleware");
 const upload = require("../middleware/FileUpload");
@@ -18,6 +19,7 @@ productRoutes.post(
 );
 productRoutes.get("/products", validateToken, getAllProducts);
 productRoutes.get("/product-by-seller", validateToken, getProductBySellerId);
+productRoutes.get("/product-by-id/:id", validateToken, getProductById);
 productRoutes.delete("/delete-product/:id", validateToken, deleteProduct);
 productRoutes.put(
   "/update-product/:id",

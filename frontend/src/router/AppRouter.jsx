@@ -10,10 +10,11 @@ import SellerLayout from "../components/Seller/SellerLayout";
 
 import AdminLayout from "../components/Admin/AdminLayout";
 import AdminDashboard from "../components/Admin/AdminDashboard";
-import AddProduct from "../pages/seller/AddProduct";
 import Order from "../components/Seller/Order";
 import ProtectedRoutes from "../components/ProtectedRoutes";
-import Products from "../pages/seller/Products"
+import AddProduct from "../pages/seller/AddProduct";
+import Products from "../pages/seller/Products";
+import UpdateProduct from "../pages/seller/UpdateProduct";
 
 const router = createBrowserRouter([
   {
@@ -35,13 +36,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoutes userRoles={["seller"]}>
         <SellerLayout />
-      </ProtectedRoutes> 
+      </ProtectedRoutes>
     ),
     children: [
-      { path:"dashboard", element: <div>Seller Dashboard</div> },
+      { path: "dashboard", element: <div>Seller Dashboard</div> },
       { path: "addproduct", element: <AddProduct /> },
+      { path: "updateproduct/:id", element: <UpdateProduct /> },
       { path: "orders", element: <Order /> },
-      {path:"products",element: <Products/>}
+      { path: "products", element: <Products /> },
     ],
   },
 
