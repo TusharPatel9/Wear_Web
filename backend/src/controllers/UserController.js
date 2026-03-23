@@ -149,7 +149,7 @@ exports.getUserDetail = async (req, res) => {
     const fetchedAddress = await Address.findOne({ userId: id });
 
 
-    if (!fetchedUser || !fetchedSeller || !fetchedAddress) {
+    if (!fetchedUser) {
       res.status(404).json({
         success: false,
         message: "User not found",

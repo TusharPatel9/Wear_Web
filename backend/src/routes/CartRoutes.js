@@ -8,7 +8,7 @@ const {
   clearCart,
 } = require("../controllers/CartController");
 
-const validateToken = require("../middleware/AuthMiddleware");
+const { validateToken } = require("../middleware/AuthMiddleware");
 
 // CART ROUTES
 cartRoutes.post("/add", validateToken, addToCart);

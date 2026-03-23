@@ -11,7 +11,6 @@ const {
   getUserOrders,
   getSellerOrders,
   updateOrderStatus,
-  cancelOrder,
 } = require("../controllers/OrderController");
 
 // ORDER
