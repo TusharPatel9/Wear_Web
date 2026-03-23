@@ -26,11 +26,12 @@ exports.addProduct = async (req, res) => {
 
     const imageUrls = [];
 
-    for (let file of req.files) {
-      const result = await uploadToCloudinary(file.path);
-      imageUrls.push(result.secure_url);
+    if (req.files && req.files.length > 0) {
+      for (let file of req.files) {
+        const result = await uploadToCloudinary(file.path);
+        imageUrls.push(result.secure_url);
+      }
     }
-
     console.log(imageUrls);
 
     try {

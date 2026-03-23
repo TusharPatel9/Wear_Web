@@ -4,13 +4,8 @@ const User = require("../models/UserModel");
 
 exports.addAddress = async (req, res) => {
   try {
-    const { userId, area, city, state, pincode, mobile } = req.body;
-
-    if (!userId || !area || !city || !state || !pincode || !mobile) {
-      return res.status(400).json({
-        message: "All fields required",
-      });
-    }
+    const userId = req.user._id;
+    const { area, city, state, pincode, mobile } = req.body;
 
     const existUser = await User.findById(userId);
 
@@ -44,32 +39,12 @@ exports.addAddress = async (req, res) => {
 
 exports.getAddressByUserId = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user._id;
 
-    // 1️⃣ Check if userId is provided
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: "User ID is required",
-      });
-    }
-
-    // 2️⃣ Validate MongoDB ObjectId
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid User ID",
-      });
-    }
-
-    // 3️⃣ Find address of particular user
-    const address = await Address.find({ userId }).populate(
-      "userId",
-      "name email"
-    );
+    const addresses = await Address.find({ userId });
 
     // 4️⃣ If no address found
-    if (!address || address.length === 0) {
+    if (!addresses || addresses.length === 0) {
       return res.status(404).json({
         success: false,
         message: "No address found for this user",
@@ -80,7 +55,7 @@ exports.getAddressByUserId = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "User address fetched successfully",
-      data: address,
+      data: addresses,
     });
   } catch (error) {
     console.error(error);
@@ -96,25 +71,6 @@ exports.getAddressByUserId = async (req, res) => {
 exports.deleteAddress = async (req, res) => {
   try {
     const { userId, addressId } = req.query;
-
-    // Check required fields
-    if (!userId || !addressId) {
-      return res.status(400).json({
-        success: false,
-        message: "User ID and Address ID are required",
-      });
-    }
-
-    // Validate MongoDB ObjectIds
-    if (
-      !mongoose.Types.ObjectId.isValid(addressId) ||
-      !mongoose.Types.ObjectId.isValid(userId)
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid ID",
-      });
-    }
 
     // Check if address exists
     const address = await Address.findById(addressId);

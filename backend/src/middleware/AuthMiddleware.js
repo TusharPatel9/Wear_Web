@@ -31,3 +31,57 @@ exports.validateToken = async (req, res, next) => {
     });
   }
 };
+
+//isCustomer
+exports.isCustomer = async (req, res, next) => {
+  try {
+    if (req.user.role !== "customer") {
+      return res.status(401).json({
+        success: false,
+        message: "This is Protected routes for customer",
+      });
+    }
+    next();
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "User role cannot verified ,please try again.",
+    });
+  }
+};
+
+//isSeller
+exports.isSeller = async (req, res, next) => {
+  try {
+    if (req.user.role !== "seller") {
+      return res.status(401).json({
+        success: false,
+        message: "This is Protected routes for seller",
+      });
+    }
+    next();
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "User role cannot verified ,please try again.",
+    });
+  }
+};
+
+//isAdmin
+exports.isAdmin = async (req, res, next) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(401).json({
+        success: false,
+        message: "This is Protected routes for Admin",
+      });
+    }
+    next();
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "User role cannot verified ,please try again.",
+    });
+  }
+};
