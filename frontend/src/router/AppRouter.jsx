@@ -16,6 +16,7 @@ import AddProduct from "../pages/seller/AddProduct";
 import Products from "../pages/seller/Products";
 import UpdateProduct from "../pages/seller/UpdateProduct";
 import SellerProfile from "../pages/seller/SellerProfile";
+import CustomerProfile from "../pages/customer/CustomerProfile";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
         index: true,
         element: <HomePage />,
       },
+      {path:"profile", element:<CustomerProfile/>}
     ],
   },
 

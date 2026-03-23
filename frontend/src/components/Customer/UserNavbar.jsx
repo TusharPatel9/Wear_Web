@@ -6,11 +6,14 @@ import { TiShoppingCart } from "react-icons/ti";
 import { CiShop } from "react-icons/ci";
 import { HiMenu, HiX } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../../AxiosInstance";
 
 function UserNavbar() {
   const links = ["Men", "Women", "Kids", "Watch"];
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [token, setToken] = useState();
+  const [name, setName] = useState();
 
   const navigate = useNavigate();
 
@@ -23,6 +26,20 @@ function UserNavbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  async function getCustomerDetail() {
+    try {
+      const response = await axiosInstance.get("/user/profile");
+      console.log(response)
+      setName(response.data.data.userObj.name);
+    } catch (error) {
+      toast.error(error.response.data.message)
+    }
+  }
+  useEffect(() => {
+    setToken(localStorage?.getItem("token"));
+    getCustomerDetail();
+  }, [])
 
   return (
     <>
@@ -57,15 +74,22 @@ function UserNavbar() {
         <div className="hidden md:flex items-center gap-8 text-gray-600">
           <IoMdSearch className="text-xl cursor-pointer hover:text-teal-600 transition" />
 
-          <button
+          {token ? (
+            <button className="w-10 h-10 bg-teal-600 rounded-full text-white"
+             onClick={()=>{navigate("/profile")}}>
+              {name?.charAt(0)}
+            </button>
+          ) : (<button
             className="flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-md font-medium hover:bg-teal-700 transition"
-            onClick={() => {
-              navigate("/login");
-            }}
+            onClick={
+              () => {
+                navigate("/login");
+              }
+            }
           >
             <CgProfile className="text-lg" />
             LOGIN
-          </button>
+          </button>)}
 
           <FaRegHeart className="text-xl cursor-pointer hover:text-teal-600 transition" />
 
@@ -80,28 +104,30 @@ function UserNavbar() {
             <HiMenu onClick={() => setMenuOpen(true)} />
           )}
         </div>
-      </nav>
+      </nav >
 
       {/* Mobile Dropdown Menu */}
-      {menuOpen && (
-        <div className="fixed top-16 left-0 w-full bg-white shadow-md md:hidden z-40">
-          <ul className="flex flex-col items-center gap-6 py-6 text-gray-700 font-medium">
-            {links.map((item, index) => (
-              <li key={index} className="hover:text-teal-600 cursor-pointer">
-                {item}
-              </li>
-            ))}
-            <button
-              className="bg-teal-600 text-white px-6 py-2 rounded-md"
-              onClick={() => {
-                navigate("/login");
-              }}
-            >
-              LOGIN
-            </button>
-          </ul>
-        </div>
-      )}
+      {
+        menuOpen && (
+          <div className="fixed top-16 left-0 w-full bg-white shadow-md md:hidden z-40">
+            <ul className="flex flex-col items-center gap-6 py-6 text-gray-700 font-medium">
+              {links.map((item, index) => (
+                <li key={index} className="hover:text-teal-600 cursor-pointer">
+                  {item}
+                </li>
+              ))}
+              <button
+                className="bg-teal-600 text-white px-6 py-2 rounded-md"
+                onClick={() => {
+                  navigate("/login");
+                }}
+              >
+                LOGIN
+              </button>
+            </ul>
+          </div>
+        )
+      }
 
       {/* Spacer so content doesn't hide behind fixed navbar */}
       <div className="h-16"></div>
