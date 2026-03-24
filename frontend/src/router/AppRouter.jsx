@@ -17,17 +17,15 @@ import Products from "../pages/seller/Products";
 import UpdateProduct from "../pages/seller/UpdateProduct";
 import SellerProfile from "../pages/seller/SellerProfile";
 import CustomerProfile from "../pages/customer/CustomerProfile";
+import CustomerProfileLayout from "../components/Customer/CustomerProfileLayout";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
     children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {path:"profile", element:<CustomerProfile/>}
+      { index: true, element: <HomePage /> },
+      { path: "profile", element: <CustomerProfileLayout /> },
     ],
   },
 
