@@ -7,18 +7,17 @@ import MainLayout from "../components/Customer/MainLayout";
 import HomePage from "../pages/HomePage";
 
 import SellerLayout from "../components/Seller/SellerLayout";
-
 import AdminLayout from "../components/Admin/AdminLayout";
 import AdminDashboard from "../components/Admin/AdminDashboard";
+import CustomerProfileLayout from "../components/Customer/CustomerProfileLayout";
 import Order from "../components/Seller/Order";
 import ProtectedRoutes from "../components/ProtectedRoutes";
 import AddProduct from "../pages/seller/AddProduct";
 import Products from "../pages/seller/Products";
 import UpdateProduct from "../pages/seller/UpdateProduct";
 import SellerProfile from "../pages/seller/SellerProfile";
-import CustomerProfile from "../pages/customer/CustomerProfile";
-import CustomerProfileLayout from "../components/Customer/CustomerProfileLayout";
 import Wishlist from "../pages/customer/Wishlist";
+import Cart from "../pages/customer/Cart";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +26,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: "profile", element: <CustomerProfileLayout /> },
-      {path:"wishlist", element: <Wishlist/>}
+      {path:"wishlist", element: <Wishlist/>},
+      {path:"cart", element: <Cart/>}
     ],
   },
 

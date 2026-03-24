@@ -11,9 +11,6 @@ const heroImages = [
   "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
 ];
 
-
-
-
 function HomePage() {
   const [current, setCurrent] = useState(0);
   const [productData, setProductData] = useState();
@@ -33,7 +30,6 @@ function HomePage() {
     try {
 
       const response = await axiosInstance.get(`/product/products?limit=8`);
-      // console.log(response.data.data)
       setProductData(response.data.data);
     } catch (error) {
       toast.error(error.response.data.message);

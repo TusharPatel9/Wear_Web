@@ -28,13 +28,12 @@ function UserNavbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
- //  Get User Profile
+  //  Get User Profile
   const getCustomerDetail = async () => {
     try {
       const res = await axiosInstance.get("/user/profile");
       setName(res.data.data.userObj.name);
     } catch (error) {
-     
       localStorage.removeItem("token");
       setToken(null);
       setName("");
@@ -42,24 +41,23 @@ function UserNavbar() {
   };
 
   useEffect(() => {
-  const checkToken = () => {
-    const storedToken = localStorage.getItem("token");
+    const checkToken = () => {
+      const storedToken = localStorage.getItem("token");
 
-    if (storedToken) {
-      setToken(storedToken);
-      getCustomerDetail();
-    } else {
-      setToken(null);
-      setName("");
-    }
-  };
-  checkToken();
-  // Listen for storage changes (logout in another tab)
-  window.addEventListener("storage", checkToken);
+      if (storedToken) {
+        setToken(storedToken);
+        getCustomerDetail();
+      } else {
+        setToken(null);
+        setName("");
+      }
+    };
+    checkToken();
+    // Listen for storage changes (logout in another tab)
+    window.addEventListener("storage", checkToken);
 
-  return () => window.removeEventListener("storage", checkToken);
-}, []);
-
+    return () => window.removeEventListener("storage", checkToken);
+  }, []);
 
   return (
     <>
@@ -95,25 +93,39 @@ function UserNavbar() {
           <IoMdSearch className="text-xl cursor-pointer hover:text-teal-600 transition" />
 
           {token ? (
-            <button className="w-10 h-10 bg-teal-600 rounded-full text-white"
-             onClick={()=>{navigate("/profile")}}>
+            <button
+              className="w-10 h-10 bg-teal-600 rounded-full text-white"
+              onClick={() => {
+                navigate("/profile");
+              }}
+            >
               {name?.charAt(0)}
             </button>
-          ) : (<button
-            className="flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-md font-medium hover:bg-teal-700 transition"
-            onClick={
-              () => {
+          ) : (
+            <button
+              className="flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-md font-medium hover:bg-teal-700 transition"
+              onClick={() => {
                 navigate("/login");
-              }
-            }
-          >
-            <CgProfile className="text-lg" />
-            LOGIN
-          </button>)}
+              }}
+            >
+              <CgProfile className="text-lg" />
+              LOGIN
+            </button>
+          )}
 
-          <FaRegHeart onClick={()=>{token ? navigate("/wishlist"): navigate("/login")}} className="text-xl cursor-pointer hover:text-teal-600 transition" />
+          <FaRegHeart
+            onClick={() => {
+              token ? navigate("/wishlist") : navigate("/login");
+            }}
+            className="text-xl cursor-pointer hover:text-teal-600 transition"
+          />
 
-          <TiShoppingCart className="text-xl cursor-pointer hover:text-teal-600 transition" />
+          <TiShoppingCart
+            onClick={() => {
+              token ? navigate("/cart") : navigate("/login");
+            }}
+            className="text-xl cursor-pointer hover:text-teal-600 transition"
+          />
         </div>
 
         {/* Mobile Menu Button */}
@@ -124,30 +136,28 @@ function UserNavbar() {
             <HiMenu onClick={() => setMenuOpen(true)} />
           )}
         </div>
-      </nav >
+      </nav>
 
       {/* Mobile Dropdown Menu */}
-      {
-        menuOpen && (
-          <div className="fixed top-16 left-0 w-full bg-white shadow-md md:hidden z-40">
-            <ul className="flex flex-col items-center gap-6 py-6 text-gray-700 font-medium">
-              {links.map((item, index) => (
-                <li key={index} className="hover:text-teal-600 cursor-pointer">
-                  {item}
-                </li>
-              ))}
-              <button
-                className="bg-teal-600 text-white px-6 py-2 rounded-md"
-                onClick={() => {
-                  navigate("/login");
-                }}
-              >
-                LOGIN
-              </button>
-            </ul>
-          </div>
-        )
-      }
+      {menuOpen && (
+        <div className="fixed top-16 left-0 w-full bg-white shadow-md md:hidden z-40">
+          <ul className="flex flex-col items-center gap-6 py-6 text-gray-700 font-medium">
+            {links.map((item, index) => (
+              <li key={index} className="hover:text-teal-600 cursor-pointer">
+                {item}
+              </li>
+            ))}
+            <button
+              className="bg-teal-600 text-white px-6 py-2 rounded-md"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              LOGIN
+            </button>
+          </ul>
+        </div>
+      )}
 
       {/* Spacer so content doesn't hide behind fixed navbar */}
       <div className="h-16"></div>
