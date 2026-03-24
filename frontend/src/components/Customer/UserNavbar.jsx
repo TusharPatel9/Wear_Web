@@ -7,6 +7,7 @@ import { CiShop } from "react-icons/ci";
 import { HiMenu, HiX } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../AxiosInstance";
+import { toast } from "react-toastify";
 
 function UserNavbar() {
   const links = ["Men", "Women", "Kids", "Watch"];
@@ -27,19 +28,38 @@ function UserNavbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  async function getCustomerDetail() {
+ //  Get User Profile
+  const getCustomerDetail = async () => {
     try {
-      const response = await axiosInstance.get("/user/profile");
-      console.log(response)
-      setName(response.data.data.userObj.name);
+      const res = await axiosInstance.get("/user/profile");
+      setName(res.data.data.userObj.name);
     } catch (error) {
-      toast.error(error.response.data.message)
+     
+      localStorage.removeItem("token");
+      setToken(null);
+      setName("");
     }
-  }
+  };
+
   useEffect(() => {
-    setToken(localStorage?.getItem("token"));
-    getCustomerDetail();
-  }, [])
+  const checkToken = () => {
+    const storedToken = localStorage.getItem("token");
+
+    if (storedToken) {
+      setToken(storedToken);
+      getCustomerDetail();
+    } else {
+      setToken(null);
+      setName("");
+    }
+  };
+  checkToken();
+  // Listen for storage changes (logout in another tab)
+  window.addEventListener("storage", checkToken);
+
+  return () => window.removeEventListener("storage", checkToken);
+}, []);
+
 
   return (
     <>
