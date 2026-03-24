@@ -111,7 +111,7 @@ function UserNavbar() {
             LOGIN
           </button>)}
 
-          <FaRegHeart className="text-xl cursor-pointer hover:text-teal-600 transition" />
+          <FaRegHeart onClick={()=>{token ? navigate("/wishlist"): navigate("/login")}} className="text-xl cursor-pointer hover:text-teal-600 transition" />
 
           <TiShoppingCart className="text-xl cursor-pointer hover:text-teal-600 transition" />
         </div>

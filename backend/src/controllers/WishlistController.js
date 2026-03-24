@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
 // 1️⃣ Add Product to Wishlist
 exports.addToWishlist = async (req, res) => {
     try {
-        const { userId, productId } = req.body;
+        const userId = req.user._id;
+        const {  productId } = req.body;
 
         // validation
         if (!userId || !productId) {
@@ -70,7 +71,7 @@ exports.addToWishlist = async (req, res) => {
 exports.getWishlist = async (req, res) => {
     try {
 
-        const { userId } = req.params;
+        const  userId  = req.user._id;
 
         if (!mongoose.Types.ObjectId.isValid(userId)) {
             return res.status(400).json({
@@ -105,8 +106,8 @@ exports.getWishlist = async (req, res) => {
 // 3️⃣ Remove Product From Wishlist
 exports.removeFromWishlist = async (req, res) => {
     try {
-
-        const { userId, productId } = req.body;
+        const userId = req.user._id;
+        const {  productId } = req.body;
 
         if (!userId || !productId) {
             return res.status(400).json({

@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import axiosInstance from "../AxiosInstance";
+import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
+import { FaHeart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const heroImages = [
   "https://images.unsplash.com/photo-1523381210434-271e8be1f52b",
@@ -6,53 +11,15 @@ const heroImages = [
   "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
 ];
 
-const products = [
-  {
-    id: 1,
-    title: "Premium Hoodie",
-    price: 1999,
-    image:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",
-  },
-  {
-    id: 2,
-    title: "Stylish Watch",
-    price: 2999,
-    image:
-      "https://images.unsplash.com/photo-1511381939415-e44015466834",
-  },
-  {
-    id: 3,
-    title: "Sneakers",
-    price: 3499,
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
-  },
-  {
-    id: 4,
-    title: "Leather Jacket",
-    price: 4999,
-    image:
-      "https://images.unsplash.com/photo-1520975916090-3105956dac38",
-  },
-  {
-    id: 5,
-    title: "Casual T-Shirt",
-    price: 999,
-    image:
-      "https://images.unsplash.com/photo-1583743814966-8936f37f9b39",
-  },
-  {
-    id: 6,
-    title: "Sunglasses",
-    price: 1499,
-    image:
-      "https://images.unsplash.com/photo-1511499767150-a48a237f0083",
-  },
-];
+
+
 
 function HomePage() {
   const [current, setCurrent] = useState(0);
+  const [productData, setProductData] = useState();
+  const [wishlist, setWishlist] = useState([]);
+
+  const navigate = useNavigate();
 
   // Auto Slider
   useEffect(() => {
@@ -61,6 +28,74 @@ function HomePage() {
     }, 4000);
     return () => clearInterval(interval);
   }, []);
+
+  const getProducts = async () => {
+    try {
+
+      const response = await axiosInstance.get(`/product/products?limit=8`);
+      // console.log(response.data.data)
+      setProductData(response.data.data);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+
+ const getWishlist = async () => {
+  try {
+    const response = await axiosInstance.get("/wishlist/");
+
+    const products = response.data.data.products;
+
+    // convert to array of IDs
+    const productIds = products.map((item) => item._id);
+
+    setWishlist(productIds);
+
+    console.log("wishlist ids:", productIds);
+
+  } catch (error) {
+    toast.error(error.response.data.message);
+  }
+};
+  useEffect(() => {
+    getProducts();
+    getWishlist();
+  }, [])
+
+  const toggleWishlist = async (productId) => {
+    try {
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/login");
+      } else {
+        if (wishlist?.includes(productId)) {
+          // 👉 REMOVE API
+          await axiosInstance.post("/wishlist/remove", {
+            productId,
+          });
+
+          setWishlist((prev) =>
+            prev.filter((item) => item !== productId)
+          );
+
+        } else {
+          // 👉 ADD API
+          await axiosInstance.post("/wishlist/add-to-wishlist", {
+            productId
+          });
+
+          setWishlist((prev) => [...prev, productId]);
+        }
+      }
+
+
+
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -88,20 +123,35 @@ function HomePage() {
       {/* ================= PRODUCTS SECTION ================= */}
       <section className="px-16 py-16 bg-gray-50">
         <h2 className="text-3xl font-bold text-center mb-12">
-          Featured Products
+          New Arrivals
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-          {products.map((item) => (
+          {productData?.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition"
+              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition relative"
             >
+              {/* Wishlist Button */}
+              <div
+                className="absolute top-3 right-3 bg-white p-2 rounded-full shadow cursor-pointer"
+                onClick={() => toggleWishlist(item._id)}
+              >
+                <FaHeart
+                  size={24}
+                  className={`text-lg transition ${wishlist?.includes(item._id)
+                    ? "text-red-500"
+                    : "text-gray-300"
+                    }`}
+                />
+              </div>
+
               <img
-                src={item.image}
+                src={item.imagePaths[0]}
                 alt={item.title}
-                className="h-60 w-full object-cover"
+                className="h-84 w-full object-cover"
               />
+
               <div className="p-4">
                 <h3 className="font-semibold text-lg mb-2">
                   {item.title}
@@ -109,6 +159,7 @@ function HomePage() {
                 <p className="text-teal-600 font-bold mb-4">
                   ₹ {item.price}
                 </p>
+
                 <button className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 transition">
                   Add to Cart
                 </button>
@@ -119,7 +170,7 @@ function HomePage() {
       </section>
 
       {/* ================= MORE PRODUCTS SECTION ================= */}
-      <section className="px-16 py-16">
+      {/* <section className="px-16 py-16">
         <h2 className="text-3xl font-bold text-center mb-12">
           New Arrivals
         </h2>
@@ -139,7 +190,7 @@ function HomePage() {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* ================= FOOTER ================= */}
       <footer className="bg-gray-900 text-gray-300 px-16 py-12">

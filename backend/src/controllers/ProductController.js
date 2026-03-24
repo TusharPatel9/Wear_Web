@@ -67,7 +67,8 @@ exports.addProduct = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const limit = parseInt(req.query.limit) ||  12;
+    const products = await Product.find().limit(limit).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       data: products,

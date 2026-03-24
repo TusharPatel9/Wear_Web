@@ -17,7 +17,7 @@ productRoutes.post(
   upload.array("images", 5),
   addProduct
 );
-productRoutes.get("/products", validateToken, getAllProducts);
+productRoutes.get("/products", getAllProducts);
 productRoutes.get("/product-by-seller", validateToken, getProductBySellerId);
 productRoutes.get("/product-by-id/:id", validateToken, getProductById);
 productRoutes.delete("/delete-product/:id", validateToken, deleteProduct);

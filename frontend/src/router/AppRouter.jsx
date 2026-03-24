@@ -18,6 +18,7 @@ import UpdateProduct from "../pages/seller/UpdateProduct";
 import SellerProfile from "../pages/seller/SellerProfile";
 import CustomerProfile from "../pages/customer/CustomerProfile";
 import CustomerProfileLayout from "../components/Customer/CustomerProfileLayout";
+import Wishlist from "../pages/customer/Wishlist";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: "profile", element: <CustomerProfileLayout /> },
+      {path:"wishlist", element: <Wishlist/>}
     ],
   },
 
