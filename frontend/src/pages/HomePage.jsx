@@ -28,39 +28,44 @@ function HomePage() {
 
   const getProducts = async () => {
     try {
-
       const response = await axiosInstance.get(`/product/products?limit=8`);
       setProductData(response.data.data);
     } catch (error) {
       toast.error(error.response.data.message);
     }
-  }
+  };
 
- const getWishlist = async () => {
-  try {
-    const response = await axiosInstance.get("/wishlist/");
+  const getWishlist = async () => {
+    try {
+      const response = await axiosInstance.get("/wishlist/");
 
-    const products = response.data.data.products;
+      const products = response.data.data.products;
 
-    // convert to array of IDs
-    const productIds = products.map((item) => item._id);
+      // convert to array of IDs
+      const productIds = products.map((item) => item._id);
 
-    setWishlist(productIds);
+      setWishlist(productIds);
 
-    console.log("wishlist ids:", productIds);
+      console.log("wishlist ids:", productIds);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
 
-  } catch (error) {
-    toast.error(error.response.data.message);
-  }
-};
+  // const addToCartHandler = async () => {
+  //   try {
+  //     const response = await axiosInstance.post("/cart/add");
+  //   } catch (error) {
+  //     console.log(error.response.data.message);
+  //   }
+  // };
   useEffect(() => {
     getProducts();
     getWishlist();
-  }, [])
+  }, []);
 
   const toggleWishlist = async (productId) => {
     try {
-
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -72,22 +77,16 @@ function HomePage() {
             productId,
           });
 
-          setWishlist((prev) =>
-            prev.filter((item) => item !== productId)
-          );
-
+          setWishlist((prev) => prev.filter((item) => item !== productId));
         } else {
           // 👉 ADD API
           await axiosInstance.post("/wishlist/add-to-wishlist", {
-            productId
+            productId,
           });
 
           setWishlist((prev) => [...prev, productId]);
         }
       }
-
-
-
     } catch (error) {
       console.error(error.response?.data || error.message);
     }
@@ -95,7 +94,6 @@ function HomePage() {
 
   return (
     <div className="w-full">
-
       {/* ================= HERO SECTION ================= */}
       <section
         className="h-[98vh] bg-cover bg-center flex items-center justify-center text-white transition-all duration-700"
@@ -118,14 +116,12 @@ function HomePage() {
 
       {/* ================= PRODUCTS SECTION ================= */}
       <section className="px-16 py-16 bg-gray-50">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          New Arrivals
-        </h2>
+        <h2 className="text-3xl font-bold text-center mb-12">New Arrivals</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
           {productData?.map((item) => (
             <div
-              key={item.id}
+              key={item._id}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition relative"
             >
               {/* Wishlist Button */}
@@ -135,10 +131,11 @@ function HomePage() {
               >
                 <FaHeart
                   size={24}
-                  className={`text-lg transition ${wishlist?.includes(item._id)
-                    ? "text-red-500"
-                    : "text-gray-300"
-                    }`}
+                  className={`text-lg transition ${
+                    wishlist?.includes(item._id)
+                      ? "text-red-500"
+                      : "text-gray-300"
+                  }`}
                 />
               </div>
 
@@ -149,15 +146,14 @@ function HomePage() {
               />
 
               <div className="p-4">
-                <h3 className="font-semibold text-lg mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-teal-600 font-bold mb-4">
-                  ₹ {item.price}
-                </p>
+                <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
+                <p className="text-teal-600 font-bold mb-4">₹ {item.price}</p>
 
-                <button className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 transition">
-                  Add to Cart
+                <button
+                  onClick={()=>navigate(`/productdetail/${item._id}`)}
+                  className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 transition"
+                >
+                  Buy Now
                 </button>
               </div>
             </div>
@@ -191,20 +187,15 @@ function HomePage() {
       {/* ================= FOOTER ================= */}
       <footer className="bg-gray-900 text-gray-300 px-16 py-12">
         <div className="grid md:grid-cols-4 gap-10">
-
           <div>
-            <h3 className="text-xl font-bold text-white mb-4">
-              Wear Web
-            </h3>
+            <h3 className="text-xl font-bold text-white mb-4">Wear Web</h3>
             <p>
               Your one-stop shop for premium fashion and lifestyle products.
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">
-              Quick Links
-            </h4>
+            <h4 className="font-semibold text-white mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li className="hover:text-white cursor-pointer">Men</li>
               <li className="hover:text-white cursor-pointer">Women</li>
@@ -214,9 +205,7 @@ function HomePage() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">
-              Customer Service
-            </h4>
+            <h4 className="font-semibold text-white mb-4">Customer Service</h4>
             <ul className="space-y-2">
               <li>Help Center</li>
               <li>Returns</li>
@@ -226,9 +215,7 @@ function HomePage() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">
-              Subscribe
-            </h4>
+            <h4 className="font-semibold text-white mb-4">Subscribe</h4>
             <input
               type="email"
               placeholder="Enter your email"

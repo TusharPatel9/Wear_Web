@@ -19,7 +19,7 @@ productRoutes.post(
 );
 productRoutes.get("/products", getAllProducts);
 productRoutes.get("/product-by-seller", validateToken, getProductBySellerId);
-productRoutes.get("/product-by-id/:id", validateToken, getProductById);
+productRoutes.get("/product-by-id/:id", getProductById);
 productRoutes.delete("/delete-product/:id", validateToken, deleteProduct);
 productRoutes.put(
   "/update-product/:id",

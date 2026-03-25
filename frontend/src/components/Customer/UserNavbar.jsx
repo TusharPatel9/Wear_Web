@@ -69,8 +69,9 @@ function UserNavbar() {
         {/* LEFT SECTION */}
         <div className="flex items-center gap-10">
           <h1
-            className="text-2xl md:text-3xl text-teal-600 tracking-wide"
+            className="text-2xl md:text-3xl text-teal-600 tracking-wide cursor-pointer"
             style={{ fontFamily: "Pacifico, cursive" }}
+            onClick={() => navigate("/")}
           >
             Wear Web
           </h1>
@@ -94,7 +95,7 @@ function UserNavbar() {
 
           {token ? (
             <button
-              className="w-10 h-10 bg-teal-600 rounded-full text-white"
+              className="w-10 h-10 bg-teal-600 rounded-full text-white cursor-pointer"
               onClick={() => {
                 navigate("/profile");
               }}
@@ -103,7 +104,7 @@ function UserNavbar() {
             </button>
           ) : (
             <button
-              className="flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-md font-medium hover:bg-teal-700 transition"
+              className="flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-md font-medium hover:bg-teal-700 transition cursor-pointer"
               onClick={() => {
                 navigate("/login");
               }}

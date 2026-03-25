@@ -4,24 +4,26 @@ const Product = require("../models/ProductModel");
 // 1. ADD TO CART
 exports.addToCart = async (req, res) => {
   try {
+    console.log(req.body);
     const userId = req.user._id;
-    const { productId, quantity, size, price } = req.body;
+    const { productId, quantity, size } = req.body;
 
-    if (!productId || !price) {
+    if (!productId) {
       return res.status(400).json({
         success: false,
         message: "ProductId and price are required",
       });
     }
 
-    let cart = await Cart.findOne({ userId });
+    let    cart = await Cart.findOne({ userId });
+
     const product = await Product.findById(productId);
 
     // If cart does not exist → create new
     if (!cart) {
       cart = new Cart({
         userId,
-        items: [{ productId, quantity, size, price }],
+        items: [{ productId, quantity, size, price: product.price }],
       });
     } else {
       // Check if product already exists in cart
@@ -43,7 +45,7 @@ exports.addToCart = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Item added to cart",
-      data:cart,
+      data: cart,
     });
   } catch (error) {
     res.status(500).json({
@@ -63,7 +65,7 @@ exports.getCart = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data:cart,
+      data: cart,
     });
   } catch (error) {
     res.status(500).json({
@@ -107,7 +109,7 @@ exports.updateCartItem = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Cart updated",
-      data:cart,
+      data: cart,
     });
   } catch (error) {
     res.status(500).json({
@@ -142,7 +144,7 @@ exports.removeFromCart = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Item removed",
-      data:cart,
+      data: cart,
     });
   } catch (error) {
     res.status(500).json({

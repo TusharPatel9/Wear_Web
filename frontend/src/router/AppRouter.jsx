@@ -18,6 +18,7 @@ import UpdateProduct from "../pages/seller/UpdateProduct";
 import SellerProfile from "../pages/seller/SellerProfile";
 import Wishlist from "../pages/customer/Wishlist";
 import Cart from "../pages/customer/Cart";
+import ProductDetail from "../pages/customer/ProductDetail";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,8 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "profile", element: <CustomerProfileLayout /> },
       {path:"wishlist", element: <Wishlist/>},
-      {path:"cart", element: <Cart/>}
+      {path:"cart", element: <Cart/>},
+      {path:"productdetail/:productId", element:<ProductDetail/>},
     ],
   },
 
