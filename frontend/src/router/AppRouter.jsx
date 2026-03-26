@@ -21,6 +21,10 @@ import Cart from "../pages/customer/Cart";
 import ProductDetail from "../pages/customer/ProductDetail";
 import CategoryProducts from "../pages/customer/CategoryProducts";
 import SearchPage from "../pages/customer/SearchPage";
+import Profile from "../pages/customer/Profile";
+import Orders from "../pages/customer/Orders";
+import Address from "../pages/customer/Address";
+import OrderDetails from "../pages/customer/OrderDetails";
 
 const router = createBrowserRouter([
   {
@@ -28,7 +32,16 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: "profile", element: <CustomerProfileLayout /> },
+      {
+        path: "profile",
+        element: <CustomerProfileLayout />,
+        children: [
+          { index: true, element: <Profile /> },
+          { path: "orders", element: <Orders /> },
+          { path: "order/:id", element: <OrderDetails /> },
+          { path: "addresses", element: <Address /> },
+        ],
+      },
       { path: "wishlist", element: <Wishlist /> },
       { path: "cart", element: <Cart /> },
       { path: "productdetail/:productId", element: <ProductDetail /> },

@@ -12,10 +12,9 @@ function CustomerProfileSidebar() {
   const navigate = useNavigate();
 
   const menuItems = [
+    { name: "Profile", path: "", icon: <MdPerson /> }, // ✅ FIX
     { name: "Orders", path: "orders", icon: <MdShoppingBag /> },
-    { name: "Profile", path: "profile", icon: <MdPerson /> },
-    { name: "Saved Cards", path: "cards", icon: <MdPayment /> },
-    { name: "Addresses", path: "address", icon: <MdLocationOn /> },
+    { name: "Addresses", path: "addresses", icon: <MdLocationOn /> },
   ];
 
   const logoutHandler = () => {
@@ -33,11 +32,11 @@ function CustomerProfileSidebar() {
             key={index}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center gap-4 px-4 py-3 text-sm rounded-md capitalize
+              `flex items-center gap-4 px-4 py-3 text-md rounded-md capitalize
               ${
                 isActive
                   ? "bg-[#008060] text-white"
-                  : "text-gray-700 hover:bg-gray-100"
+                  : "text-gray-700  hover:bg-gray-100"
               }`
             }
           >

@@ -438,7 +438,7 @@ function CategoryProducts() {
           <div className="mb-4 mt-4 border-b border-gray-300 pb-4">
             <h4 className="text-md font-semibold mb-2">BRAND</h4>
             <div className="space-y-2 text-sm max-h-40 overflow-y-auto">
-              {["Roadster", "HRX", "Tommy Hilfiger", "Levis", "Puma"].map(
+              {["U.S. POLO", "HRX", "Tommy Hilfiger", "Levis", "Puma"].map(
                 (brand) => (
                   <label key={brand} className="flex items-center gap-2">
                     <input
@@ -479,7 +479,7 @@ function CategoryProducts() {
               { name: "White", code: "#fff" },
               { name: "Blue", code: "#3b82f6" },
               { name: "Red", code: "#ef4444" },
-              { name: "Green", code: "#22c55e" },
+              { name: "Navy", code: "#000042" },
             ].map((color) => (
               <label key={color.name} className="flex items-center gap-2">
                 <input

@@ -126,30 +126,36 @@ function UserNavbar() {
 
                 {/* DROPDOWN */}
                 <div className="absolute left-0 top-full mt-1 w-max min-w-[400px] bg-white shadow-lg p-6 hidden group-hover:flex gap-10 z-[999] border-t-2 border-gray-200">
-                  {mainCat.children?.map((subCat) => (
-                    <div
-                      key={subCat._id}
-                      className="flex flex-col min-w-[150px]"
-                    >
-                      <h3 className="text-red-500 font-semibold mb-2">
-                        {subCat.name}
-                      </h3>
+                  {[...(mainCat.children || [])]
+                    .sort((a, b) => {
+                      const order = ["Top-Wear", "Bottom-Wear", "Foot-Wear"];
 
-                      <ul className="space-y-1 text-gray-600">
-                        {subCat.children?.map((child) => (
-                          <li
-                            key={child._id}
-                            onClick={() =>
-                              navigate(`/products/category/${child._id}`)
-                            }
-                            className="hover:text-teal-600 cursor-pointer"
-                          >
-                            {child.name}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                      return order.indexOf(a.name) - order.indexOf(b.name);
+                    })
+                    .map((subCat) => (
+                      <div
+                        key={subCat._id}
+                        className="flex flex-col min-w-[150px]"
+                      >
+                        <h3 className="text-red-500 font-semibold mb-2">
+                          {subCat.name}
+                        </h3>
+
+                        <ul className="space-y-1 text-gray-600">
+                          {subCat.children?.map((child) => (
+                            <li
+                              key={child._id}
+                              onClick={() =>
+                                navigate(`/products/category/${child._id}`)
+                              }
+                              className="hover:text-teal-600 cursor-pointer"
+                            >
+                              {child.name}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                 </div>
               </li>
             ))}

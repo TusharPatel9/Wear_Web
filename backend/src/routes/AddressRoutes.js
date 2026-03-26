@@ -6,10 +6,11 @@ const {
   getAddressByUserId,
   updateAddress,
 } = require("../controllers/AddressController");
+const { validateToken } = require("../middleware/AuthMiddleware");
 
-addressRouter.post("/add-address", addAddress);
-addressRouter.get("/get-address/:userId", getAddressByUserId);
-addressRouter.put("/update-address/:addressId", updateAddress);
-addressRouter.delete("/delete-address", deleteAddress);
+addressRouter.post("/add-address", validateToken, addAddress);
+addressRouter.get("/get-address", validateToken, getAddressByUserId);
+addressRouter.put("/update-address/:addressId", validateToken, updateAddress);
+addressRouter.delete("/delete-address", validateToken, deleteAddress);
 
 module.exports = addressRouter;

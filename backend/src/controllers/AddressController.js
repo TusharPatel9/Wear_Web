@@ -70,7 +70,8 @@ exports.getAddressByUserId = async (req, res) => {
 
 exports.deleteAddress = async (req, res) => {
   try {
-    const { userId, addressId } = req.query;
+    const userId = req.user._id;
+    const { addressId } = req.query;
 
     // Check if address exists
     const address = await Address.findById(addressId);
@@ -114,25 +115,9 @@ exports.deleteAddress = async (req, res) => {
 exports.updateAddress = async (req, res) => {
   try {
     const { addressId } = req.params;
-
-    const { userId, area, city, state, pincode, mobile } = req.body;
-
-    if (!addressId || !userId) {
-      return res.status(400).json({
-        success: false,
-        message: "Address ID and User ID are required",
-      });
-    }
-
-    if (
-      !mongoose.Types.ObjectId.isValid(addressId) ||
-      !mongoose.Types.ObjectId.isValid(userId)
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid ID",
-      });
-    }
+    console.log(addressId);
+    const userId = req.user._id;
+    const { area, city, state, pincode, mobile } = req.body;
 
     const existUser = await User.findById(userId);
 
