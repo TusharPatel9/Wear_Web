@@ -91,6 +91,16 @@ export default function AddProduct() {
         message: "Select at least one size",
       },
     },
+    brandValidator: {
+      required: {
+        value: true,
+        message: "Brand is required",
+      },
+      minLength: {
+        value: 2,
+        message: "Brand must be at least 2 characters",
+      },
+    },
   };
 
   /* ---------------- FETCH CATEGORIES ---------------- */
@@ -122,13 +132,13 @@ export default function AddProduct() {
   /* ---------------- SUBMIT HANDLER ---------------- */
 
   const submitHandler = async (data) => {
-    
     if (!selectedLevel1) {
       toast.error("Please select a category");
       return;
     }
 
     data.colors = data.colors.split(",").map((color) => color.trim());
+    data.brand = data.brand.trim().toUpperCase();
     data.categoryId = selectedLevel3 || selectedLevel2 || selectedLevel1;
 
     try {
@@ -161,8 +171,8 @@ export default function AddProduct() {
       toast.error(error.response?.data?.message || "Error uploading");
     }
   };
-  
-  // image upload 
+
+  // image upload
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
 
@@ -188,7 +198,6 @@ export default function AddProduct() {
         </h2>
 
         <form onSubmit={handleSubmit(submitHandler)} className="space-y-6">
-          
           {/* images */}
           <div className="w-full flex gap-3">
             {/* Upload Box */}
@@ -229,6 +238,22 @@ export default function AddProduct() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* BRAND */}
+          <div>
+            <input
+              type="text"
+              placeholder="Brand (e.g. Nike, Adidas)"
+              {...register("brand", validateSchema.brandValidator)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3"
+            />
+
+            {errors.brand && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.brand.message}
+              </p>
+            )}
           </div>
 
           {/* TITLE */}

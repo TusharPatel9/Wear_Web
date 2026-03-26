@@ -5,6 +5,8 @@ const {
   getProductBySellerId,
   updateProduct,
   getProductById,
+  getProductsByCategory,
+  searchProducts,
 } = require("../controllers/ProductController");
 const { validateToken } = require("../middleware/AuthMiddleware");
 const upload = require("../middleware/FileUpload");
@@ -27,5 +29,7 @@ productRoutes.put(
   upload.array("images"),
   updateProduct
 );
+productRoutes.get("/category/:categoryId", getProductsByCategory);
+productRoutes.get("/search", searchProducts);
 
 module.exports = productRoutes;

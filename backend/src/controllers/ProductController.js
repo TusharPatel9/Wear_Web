@@ -15,6 +15,7 @@ exports.addProduct = async (req, res) => {
       size,
       colors,
       sku,
+      brand,
     } = req.body;
 
     // if (!title || !description || !price || !quantity || !size || !colors || !sku)  {
@@ -45,6 +46,7 @@ exports.addProduct = async (req, res) => {
         size,
         colors,
         sku,
+        brand,
         imagePaths: imageUrls,
       });
 
@@ -67,7 +69,7 @@ exports.addProduct = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) ||  12;
+    const limit = parseInt(req.query.limit) || 12;
     const products = await Product.find().limit(limit).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
@@ -182,11 +184,6 @@ exports.updateProduct = async (req, res) => {
       updatedImages = updatedImages.filter(
         (img) => !removeImages.includes(img)
       );
-
-      // 🔥 OPTIONAL: delete from Cloudinary
-      // for (let img of removeImages) {
-      //   await deleteFromCloudinary(img);
-      // }
     }
 
     // ✅ 3. ADD NEW IMAGES
@@ -261,3 +258,149 @@ exports.getProductById = async (req, res) => {
     });
   }
 };
+
+// exports.getProductsByCategory = async (req, res) => {
+//   try {
+//     const { categoryId } = req.params;
+//     const {
+//       page = 1,
+//       limit = 8,
+//       minPrice = 0,
+//       maxPrice = 100000,
+//       sort,
+//     } = req.query;
+
+//     const skip = (page - 1) * limit;
+
+//     let sortOption = {};
+//     if (sort === "low") sortOption.price = 1;
+//     if (sort === "high") sortOption.price = -1;
+//     if (sort === "new") sortOption.createdAt = -1;
+
+//     const products = await Product.find({
+//       categoryId,
+//       price: { $gte: minPrice, $lte: maxPrice },
+//     })
+//       .sort(sortOption)
+//       .skip(skip)
+//       .limit(parseInt(limit));
+
+//     const total = await Product.countDocuments({
+//       categoryId,
+//       price: { $gte: minPrice, $lte: maxPrice },
+//     });
+
+//     res.status(200).json({
+//       success: true,
+//       data: products,
+//       totalPages: Math.ceil(total / limit),
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Error fetching products",
+//       error: error.message,
+//     });
+//   }
+// };
+
+exports.getProductsByCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+    const {
+      page = 1,
+      limit = 8,
+      minPrice = 0,
+      maxPrice = 100000,
+      sort,
+      colors,
+      brands,
+    } = req.query;
+
+    const skip = (page - 1) * limit;
+
+    // 🔥 SORT
+    let sortOption = {};
+    if (sort === "low") sortOption.price = 1;
+    if (sort === "high") sortOption.price = -1;
+    if (sort === "new") sortOption.createdAt = -1;
+
+    // 🔥 BASE FILTER
+    let filter = {
+      categoryId,
+      price: { $gte: minPrice, $lte: maxPrice },
+    };
+
+    // ✅ COLOR FILTER
+    if (colors) {
+      const colorArray = colors.split(",");
+      filter.colors = { $in: colorArray };
+    }
+
+    // ✅🔥 BRAND FILTER (IMPROVED)
+    if (brands) {
+      const brandArray = brands.split(",").map((b) => b.trim());
+
+      // case-insensitive match using regex
+      filter.brand = {
+        $in: brandArray.map(
+          (b) => new RegExp(`^${b}$`, "i") // exact match but ignore case
+        ),
+      };
+    }
+
+    // 🔥 FETCH PRODUCTS
+    const products = await Product.find(filter)
+      .sort(sortOption)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await Product.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      data: products,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching products",
+      error: error.message,
+    });
+  }
+};
+
+// 🔥 SEARCH PRODUCTS
+exports.searchProducts = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query) {
+      return res.status(400).json({
+        success: false,
+        message: "Search query is required",
+      });
+    }
+
+    // 🔥 Case-insensitive search
+    const products = await Product.find({
+      $or: [
+        { title: { $regex: query, $options: "i" } },
+        { brand: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+        
+      ],
+    }).limit(20);
+
+    res.status(200).json({
+      success: true,
+      data: products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Search failed",
+      error: error.message,
+    });
+  }
+};
+  

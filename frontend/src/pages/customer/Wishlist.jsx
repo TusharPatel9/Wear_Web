@@ -1,89 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { toast } from "react-toastify";
-// import axiosInstance from "../../AxiosInstance.js";
-// import { RxCross2 } from "react-icons/rx";
-// import { useNavigate } from "react-router-dom";
-
-// export default function Wishlist() {
-//   const [wishData, setWishData] = useState([]);
-//   const navigate = useNavigate();
-
-//   const getWishlist = async () => {
-//     try {
-//       const response = await axiosInstance.get("/wishlist/");
-//       setWishData(response.data.data.products);
-//     } catch (error) {
-//       toast.error(error.response.data.message);
-//     }
-//   };
-
-//   const removeItemFromWishlist = async (productId) => {
-//     try {
-//       const res = await axiosInstance.post("/wishlist/remove", {
-//         productId,
-//       });
-
-//       setWishData((prev) => prev.filter((item) => item._id !== productId));
-//       toast.success(res.data.message);
-//     } catch (error) {
-//       console.error(error.response?.data || error.message);
-//     }
-//   };
-
-//   useEffect(() => {
-//     getWishlist();
-//   }, []);
-
-//   return (
-//     <div className="px-6 py-8 bg-gray-100 min-h-[calc(100vh-64px)]">
-//       {/* Title */}
-//       <h2 className="text-2xl font-semibold mb-8">
-//         My Wishlist{" "}
-//         <span className="text-gray-500 text-base">{wishData.length} items</span>
-//       </h2>
-
-//       {/* Grid */}
-//       <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition relative max-w-[290px]">
-//         {wishData?.map((item) => (
-//           <div
-//             key={item._id}
-//             className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition relative"
-//           >
-//             {/* Wishlist Button */}
-//             <div
-//               className="absolute top-3 right-3 bg-gray-200 p-2 rounded-full shadow cursor-pointer"
-//               onClick={() => removeItemFromWishlist(item._id)}
-//             >
-//               <RxCross2
-//                 size={24}
-//                 className={`text-lg transitio text-gray-800`}
-//               />
-//             </div>
-
-//             <img
-//               src={item.imagePaths[0]}
-//               alt={item.title}
-//               className="h-60 w-full object-cover"
-//             />
-
-//             <div className="p-4">
-//               <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-//               <p className="text-teal-600 font-bold mb-4">₹ {item.price}</p>
-
-//               <button
-//                 onClick={() => navigate("/cart")}
-//                 className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 transition"
-//               >
-//                 Move to Cart
-//               </button>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }
-
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../AxiosInstance.js";
@@ -153,41 +67,53 @@ export default function Wishlist() {
       </h2>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-5 gap-6">
         {wishData?.map((item) => (
-          <div
-            key={item._id}
-            className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition relative"
-          >
-            {/* Remove Button */}
-            <div
-              className="absolute top-3 right-3 bg-gray-200 p-2 rounded-full shadow cursor-pointer"
-              onClick={() => removeItemFromWishlist(item._id)}
-            >
-              <RxCross2 size={20} className="text-gray-800" />
-            </div>
+          <div key={item._id} className="group cursor-pointer">
+            {/* IMAGE */}
+            <div className="relative">
+              <img
+                src={item.imagePaths[0]}
+                className="h-72  w-full object-cover"
+              />
 
-            <img
-              src={item.imagePaths[0]}
-              alt={item.title}
-              className="h-60 w-full object-cover"
-            />
-
-            <div className="p-4">
-              <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-
-              <p className="text-teal-600 font-bold mb-4">₹ {item.price}</p>
-
-              {/* ✅ MOVE TO CART BUTTON */}
-              <button
-                onClick={() => {
-                  moveToCart(item);
-                }}
-                className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 transition"
+              {/* ❌ Remove Button (same position as wishlist heart) */}
+              <div
+                onClick={() => removeItemFromWishlist(item._id)}
+                className="absolute top-3 right-3 bg-white p-2 rounded-full shadow cursor-pointer"
               >
-                Move to Cart
-              </button>
+                <RxCross2 className="text-gray-800" />
+              </div>
+
+              {/* ⭐ Rating (same as your product card) */}
+              <div className="absolute bottom-2 left-2 bg-white text-xs px-2 py-1 flex items-center gap-1 shadow">
+                <span className="text-green-600 text-xs">★</span>
+                4.3 | 2.4k
+              </div>
             </div>
+
+            {/* INFO */}
+            <div className="mt-2 mb-3">
+              <h3 className="text-sm font-semibold">{item.brand || "Brand"}</h3>
+
+              <p className="text-xs text-gray-500 truncate">{item.title}</p>
+
+              <p className="text-sm font-semibold mt-1">
+                ₹{item.price}
+                <span className="text-gray-400 line-through text-xs ml-2">
+                  ₹{item.price + 300}
+                </span>
+                <span className="text-orange-500 text-xs ml-2">(30% OFF)</span>
+              </p>
+            </div>
+
+            {/* ✅ Move to Cart button (replacing Buy Now) */}
+            <button
+              onClick={() => moveToCart(item)}
+              className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700"
+            >
+              Move to Cart
+            </button>
           </div>
         ))}
       </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../AxiosInstance";
 import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
-import { FaHeart } from "react-icons/fa";
+import { FaHeart, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const heroImages = [
@@ -31,7 +31,7 @@ function HomePage() {
       const response = await axiosInstance.get(`/product/products?limit=8`);
       setProductData(response.data.data);
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.log(error.response.data.message);
     }
   };
 
@@ -52,13 +52,6 @@ function HomePage() {
     }
   };
 
-  // const addToCartHandler = async () => {
-  //   try {
-  //     const response = await axiosInstance.post("/cart/add");
-  //   } catch (error) {
-  //     console.log(error.response.data.message);
-  //   }
-  // };
   useEffect(() => {
     getProducts();
     getWishlist();
@@ -119,45 +112,64 @@ function HomePage() {
         <h2 className="text-3xl font-bold text-center mb-12">New Arrivals</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-          {productData?.map((item) => (
-            <div
-              key={item._id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition relative"
-            >
-              {/* Wishlist Button */}
-              <div
-                className="absolute top-3 right-3 bg-white p-2 rounded-full shadow cursor-pointer"
-                onClick={() => toggleWishlist(item._id)}
-              >
-                <FaHeart
-                  size={24}
-                  className={`text-lg transition ${
-                    wishlist?.includes(item._id)
-                      ? "text-red-500"
-                      : "text-gray-300"
-                  }`}
-                />
-              </div>
-
-              <img
-                src={item.imagePaths[0]}
-                alt={item.title}
-                className="h-84 w-full object-cover"
-              />
-
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-teal-600 font-bold mb-4">₹ {item.price}</p>
-
-                <button
-                  onClick={()=>navigate(`/productdetail/${item._id}`)}
-                  className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 transition"
-                >
-                  Buy Now
-                </button>
-              </div>
-            </div>
-          ))}
+            {productData?.map((item) => (
+                          <div key={item._id} className="group cursor-pointer">
+                            {/* IMAGE */}
+                            <div className="relative">
+                              <img
+                                src={item.imagePaths[0]}
+                                className="h-72 w-full object-cover"
+                              />
+          
+                              {/* Wishlist */}
+                              <div
+                                onClick={() => toggleWishlist(item._id)}
+                                className="absolute top-3 right-3 bg-white p-2 rounded-full shadow"
+                              >
+                                <FaHeart
+                                  className={
+                                    wishlist.includes(item._id)
+                                      ? "text-red-500"
+                                      : "text-gray-300"
+                                  }
+                                />
+                              </div>
+          
+                              {/* Rating */}
+                              <div className="absolute bottom-2 left-2 bg-white text-xs px-2 py-1 flex items-center gap-1 shadow">
+                                <FaStar className="text-green-600 text-xs" />
+                                4.3 | 2.4k
+                              </div>
+                            </div>
+          
+                            {/* INFO */}
+                            <div className="mt-2 mb-3">
+                              <h3 className="text-sm font-semibold">
+                                {item.brand || "Brand"}
+                              </h3>
+                              <p className="text-xs text-gray-500 truncate">
+                                {item.title}
+                              </p>
+          
+                              <p className="text-sm font-semibold mt-1">
+                                ₹{item.price}
+                                <span className="text-gray-400 line-through text-xs ml-2">
+                                  ₹{item.price + 300}
+                                </span>
+                                <span className="text-orange-500 text-xs ml-2">
+                                  (30% OFF)
+                                </span>
+                              </p>
+                            </div>
+          
+                            <button
+                              onClick={() => navigate(`/productdetail/${item._id}`)}
+                              className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 transition"
+                            >
+                              Buy Now
+                            </button>
+                          </div>
+                        ))}
         </div>
       </section>
 

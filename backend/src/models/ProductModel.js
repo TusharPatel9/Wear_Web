@@ -41,6 +41,9 @@ const productSchema = new mongoose.Schema(
       type: [String],
       enum: ["S", "M", "L", "XL", "XXL"],
     },
+    brand: {
+      type: String,
+    },
 
     colors: {
       type: [String],

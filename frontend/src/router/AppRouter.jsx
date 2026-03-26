@@ -19,6 +19,8 @@ import SellerProfile from "../pages/seller/SellerProfile";
 import Wishlist from "../pages/customer/Wishlist";
 import Cart from "../pages/customer/Cart";
 import ProductDetail from "../pages/customer/ProductDetail";
+import CategoryProducts from "../pages/customer/CategoryProducts";
+import SearchPage from "../pages/customer/SearchPage";
 
 const router = createBrowserRouter([
   {
@@ -27,9 +29,11 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <HomePage /> },
       { path: "profile", element: <CustomerProfileLayout /> },
-      {path:"wishlist", element: <Wishlist/>},
-      {path:"cart", element: <Cart/>},
-      {path:"productdetail/:productId", element:<ProductDetail/>},
+      { path: "wishlist", element: <Wishlist /> },
+      { path: "cart", element: <Cart /> },
+      { path: "productdetail/:productId", element: <ProductDetail /> },
+      { path: "products/category/:categoryId", element: <CategoryProducts /> },
+      { path: "/search", element: <SearchPage /> },
     ],
   },
 

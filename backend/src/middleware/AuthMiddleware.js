@@ -21,7 +21,7 @@ exports.validateToken = async (req, res, next) => {
     } else {
       res.status(401).json({
         success: false,
-        message: "token is missing",
+        // message: "token is missing",
       });
     }
   } catch (error) {

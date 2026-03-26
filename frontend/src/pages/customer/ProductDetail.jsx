@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../AxiosInstance";
 import { IoIosStar } from "react-icons/io";
 import { FaCheckCircle } from "react-icons/fa";
@@ -12,9 +12,11 @@ function ProductDetail() {
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
-//   const [selectedColor, setSelectedColor] = useState("");
+  const [token, setToken] = useState();
+  //   const [selectedColor, setSelectedColor] = useState("");
   const [error, setError] = useState("");
   const [qty, setQty] = useState(1);
+  const navigate = useNavigate();
 
   const handleQty = (type) => {
     if (type === "inc") {
@@ -59,8 +61,14 @@ function ProductDetail() {
 
   useEffect(() => {
     getProductDetailById();
-  }, []);
+    const storedToken = localStorage.getItem("token");
 
+    if (storedToken) {
+      setToken(storedToken);
+    } else {
+      setToken(null);
+    }
+  }, []);
   useEffect(() => {
     if (product?.imagePaths?.length > 0) {
       setSelectedImage(product.imagePaths[0]);
@@ -158,20 +166,6 @@ function ProductDetail() {
             </div>
           )}
 
-          {/* QUANTITY */}
-          <div>
-            <h3 className="font-medium mb-2">Quantity</h3>
-            <div className="flex items-center border w-fit rounded-lg">
-              <button onClick={() => handleQty("dec")} className="px-3 py-1">
-                -
-              </button>
-              <span className="px-4">{qty}</span>
-              <button onClick={() => handleQty("inc")} className="px-3 py-1">
-                +
-              </button>
-            </div>
-          </div>
-
           {/* STOCK */}
           <p className="text-sm text-teal-900">
             {product?.quantity < 0 && "Out of stock"}
@@ -179,7 +173,7 @@ function ProductDetail() {
 
           {/* ADD TO CART */}
           <button
-            onClick={handleAddToCart}
+            onClick={() => (token ? handleAddToCart() : navigate("/login"))}
             className="bg-teal-600 text-white py-3 rounded-xl hover:bg-teal-800 transition"
           >
             Add to Cart
