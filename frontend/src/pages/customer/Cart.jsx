@@ -349,7 +349,7 @@ function Cart() {
 
                 <div className="flex justify-between text-md">
                   <span>Shipping</span>
-                  <span>₹79</span>
+                  <span>₹0</span>
                 </div>
 
                 <div className="flex justify-between text-md">
@@ -361,7 +361,7 @@ function Cart() {
 
                 <div className="flex justify-between font-semibold text-lg">
                   <span>Total</span>
-                  <span>₹{totalPrice + 79}</span>
+                  <span>₹{totalPrice}</span>
                 </div>
 
                 <button className="w-full mt-3 bg-teal-600 hover:bg-teal-800 text-white py-3 rounded-lg font-semibold transition">

@@ -36,11 +36,7 @@ const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       {
         path: "profile",
-        element: (
-           <ProtectedRoutes userRoles={["customer"]}>
-            <CustomerProfileLayout />
-           </ProtectedRoutes>
-        ),
+        element: <CustomerProfileLayout />,
         children: [
           { path: "profile", element: <Profile /> },
           { path: "orders", element: <Orders /> },
@@ -67,7 +63,7 @@ const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
     children: [
-      { path: "dashboard", element: <SellerDashboard/> },
+      { path: "dashboard", element: <SellerDashboard /> },
       { path: "addproduct", element: <AddProduct /> },
       { path: "updateproduct/:id", element: <UpdateProduct /> },
       { path: "orders", element: <Order /> },
