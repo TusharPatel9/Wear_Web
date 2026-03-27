@@ -25,18 +25,24 @@ import Profile from "../pages/customer/Profile";
 import Orders from "../pages/customer/Orders";
 import Address from "../pages/customer/Address";
 import OrderDetails from "../pages/customer/OrderDetails";
+import SellerDashboard from "../pages/seller/SellerDashboard";
 
 const router = createBrowserRouter([
   {
     path: "/",
+
     element: <MainLayout />,
     children: [
       { index: true, element: <HomePage /> },
       {
         path: "profile",
-        element: <CustomerProfileLayout />,
+        element: (
+           <ProtectedRoutes userRoles={["customer"]}>
+            <CustomerProfileLayout />
+           </ProtectedRoutes>
+        ),
         children: [
-          { index: true, element: <Profile /> },
+          { path: "profile", element: <Profile /> },
           { path: "orders", element: <Orders /> },
           { path: "order/:id", element: <OrderDetails /> },
           { path: "addresses", element: <Address /> },
@@ -61,7 +67,7 @@ const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
     children: [
-      { path: "dashboard", element: <div>Seller Dashboard</div> },
+      { path: "dashboard", element: <SellerDashboard/> },
       { path: "addproduct", element: <AddProduct /> },
       { path: "updateproduct/:id", element: <UpdateProduct /> },
       { path: "orders", element: <Order /> },

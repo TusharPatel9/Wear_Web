@@ -12,7 +12,7 @@ function CustomerProfileSidebar() {
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: "Profile", path: "", icon: <MdPerson /> }, // ✅ FIX
+    { name: "Profile", path: "profile", icon: <MdPerson /> }, // ✅ FIX
     { name: "Orders", path: "orders", icon: <MdShoppingBag /> },
     { name: "Addresses", path: "addresses", icon: <MdLocationOn /> },
   ];

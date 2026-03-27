@@ -38,7 +38,6 @@ export default function SellerProfile() {
     const bankForm = useForm();
 
     const seller = {
-        image: "https://i.pravatar.cc/150",
         bankName: "HDFC Bank",
         accountNumber: "XXXXXX1234",
         ifsc: "HDFC0001234",
@@ -114,11 +113,11 @@ export default function SellerProfile() {
 
                 {/* ================= PROFILE ================= */}
                 <div className="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row items-center gap-6">
-
-                    <img
-                        src={seller.image}
-                        className="w-28 h-28 rounded-full border"
-                    />
+                    <button
+                        className="w-24 h-24 bg-teal-600 text-4xl rounded-full text-white border"
+                    >
+                        {userData?.name.charAt(0)}
+                    </button>
 
                     <div className="flex-1">
                         <h2 className="text-2xl font-bold">{userData?.name}</h2>

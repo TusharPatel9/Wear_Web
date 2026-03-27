@@ -70,7 +70,7 @@ exports.addProduct = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 12;
-    const products = await Product.find().limit(limit).sort({ createdAt: -1 });
+    const products = await Product.find().limit(limit);
     res.status(200).json({
       success: true,
       data: products,
@@ -369,25 +369,17 @@ exports.getProductsByCategory = async (req, res) => {
   }
 };
 
-// 🔥 SEARCH PRODUCTS
 exports.searchProducts = async (req, res) => {
   try {
     const { query } = req.query;
 
-    if (!query) {
-      return res.status(400).json({
-        success: false,
-        message: "Search query is required",
-      });
-    }
+    const regex = new RegExp(`(^|\\s)${query}(\\s|$)`, "i");
 
-    // 🔥 Case-insensitive search
     const products = await Product.find({
       $or: [
-        { title: { $regex: query, $options: "i" } },
-        { brand: { $regex: query, $options: "i" } },
-        { description: { $regex: query, $options: "i" } },
-        
+        { title: regex },
+        { brand: regex },
+        { description: regex },
       ],
     }).limit(20);
 
@@ -395,6 +387,7 @@ exports.searchProducts = async (req, res) => {
       success: true,
       data: products,
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -403,4 +396,3 @@ exports.searchProducts = async (req, res) => {
     });
   }
 };
-  

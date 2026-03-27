@@ -13,9 +13,13 @@ export default function Wishlist() {
       const response = await axiosInstance.get("/wishlist/");
       setWishData(response.data.data.products);
     } catch (error) {
-      toast.error(error.response?.data?.message);
+      console.error(error.response?.data?.message);
     }
   };
+
+  useEffect(() => {
+    getWishlist();
+  }, []);
 
   const removeItemFromWishlist = async (productId) => {
     try {
@@ -54,9 +58,7 @@ export default function Wishlist() {
     }
   };
 
-  useEffect(() => {
-    getWishlist();
-  }, []);
+
 
   return (
     <div className="px-6 py-8 bg-gray-100 min-h-[calc(100vh-64px)]">

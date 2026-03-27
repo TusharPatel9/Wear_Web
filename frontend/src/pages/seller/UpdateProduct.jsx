@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdOutlineAddPhotoAlternate } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axiosInstance from "../../AxiosInstance";
 import { useEffect } from "react";
@@ -14,7 +14,7 @@ function UpdateProduct({ productId }) {
   const [product, setProduct] = useState(null);
   const [removeImages, setRemoveImages] = useState([]);
   
-
+const navigate = useNavigate();
   const { id } = useParams();
   console.log(id);
   const {
@@ -374,6 +374,7 @@ function UpdateProduct({ productId }) {
 
           <div className="text-center mt-6">
             <button
+            onClick={()=> {navigate("/seller/products")}}
               type="submit"
               className="bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-3 rounded-lg transition"
             >

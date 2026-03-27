@@ -28,7 +28,7 @@ function HomePage() {
 
   const getProducts = async () => {
     try {
-      const response = await axiosInstance.get(`/product/products?limit=8`);
+      const response = await axiosInstance.get(`/product/products?limit=12`);
       setProductData(response.data.data);
     } catch (error) {
       console.log(error.response.data.message);

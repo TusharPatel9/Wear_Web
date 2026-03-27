@@ -20,7 +20,7 @@ function SellerSidebar() {
     { name: "Products", path: "products", icon: <MdInventory2 /> },
     { name: "Add Product", path: "addproduct", icon: <MdAdd /> },
     { name: "Payment", path: "payment", icon: <MdPayment /> },
-    { name: "Transaction", path: "transaction", icon: <MdReceiptLong /> },
+    // { name: "Transaction", path: "transaction", icon: <MdReceiptLong /> },
   ];
 
   return (

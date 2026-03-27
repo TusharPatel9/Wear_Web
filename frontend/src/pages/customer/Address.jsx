@@ -104,7 +104,7 @@ export default function Address() {
               <input
                 placeholder="Mobile"
                 {...register("mobile", { required: true })}
-                className="shadow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="shadow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500"
               />
               {errors.mobile && <p className="text-red-500 text-sm">Required</p>}
 
@@ -112,7 +112,7 @@ export default function Address() {
               <input
                 placeholder="Pincode"
                 {...register("pincode", { required: true })}
-                className="shadow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="shadow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500"
               />
               {errors.pincode && <p className="text-red-500 text-sm">Required</p>}
 
@@ -120,7 +120,7 @@ export default function Address() {
               <input
                 placeholder="City"
                 {...register("city", { required: true })}
-                className="shadow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="shadow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500"
               />
               {errors.city && <p className="text-red-500 text-sm">Required</p>}
 
@@ -128,7 +128,7 @@ export default function Address() {
               <input
                 placeholder="State"
                 {...register("state", { required: true })}
-                className="shadow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="shadow rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-gray-500"
               />
               {errors.state && <p className="text-red-500 text-sm">Required</p>}
 
@@ -136,7 +136,7 @@ export default function Address() {
               <textarea
                 placeholder="Area / Street"
                 {...register("area", { required: true })}
-                className="shadow rounded-lg p-3 md:col-span-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="shadow rounded-lg p-3 md:col-span-2 focus:outline-none focus:ring-2 focus:ring-gray-500"
               />
               {errors.area && <p className="text-red-500 text-sm">Required</p>}
             </div>
