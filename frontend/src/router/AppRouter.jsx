@@ -2,6 +2,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Login from "../components/Login";
 import Register from "../components/Register";
+import ForgotPassword from "../components/ForgotPassword";
+import ResetPassword from "../components/ResetPassword";
 
 import MainLayout from "../components/Customer/MainLayout";
 import HomePage from "../pages/HomePage";
@@ -18,6 +20,7 @@ import UpdateProduct from "../pages/seller/UpdateProduct";
 import SellerProfile from "../pages/seller/SellerProfile";
 import Wishlist from "../pages/customer/Wishlist";
 import Cart from "../pages/customer/Cart";
+import Checkout from "../pages/customer/Checkout";
 import ProductDetail from "../pages/customer/ProductDetail";
 import CategoryProducts from "../pages/customer/CategoryProducts";
 import SearchPage from "../pages/customer/SearchPage";
@@ -46,6 +49,7 @@ const router = createBrowserRouter([
       },
       { path: "wishlist", element: <Wishlist /> },
       { path: "cart", element: <Cart /> },
+      { path: "checkout", element: <Checkout /> },
       { path: "productdetail/:productId", element: <ProductDetail /> },
       { path: "products/category/:categoryId", element: <CategoryProducts /> },
       { path: "/search", element: <SearchPage /> },
@@ -54,6 +58,8 @@ const router = createBrowserRouter([
 
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
+  { path: "/reset-password", element: <ResetPassword /> },
 
   {
     path: "/seller",

@@ -170,6 +170,13 @@ function Login() {
               Register
             </Link>
           </p>
+          {/* forgot Password */}
+          <p className="text-center text-sm text-gray-500 mt-6">
+            Forgot Password?
+            <Link to="/forgot-password" className="text-teal-600 ml-1 font-medium">
+              Reset Password
+            </Link>
+          </p>
         </div>
       </div>
     </div>

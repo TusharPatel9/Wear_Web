@@ -187,7 +187,7 @@ function UserNavbar() {
               className="w-10 h-10 bg-teal-600 rounded-full text-white"
               onClick={() => navigate("/profile")}
             >
-              {name?.charAt(0)}
+              {name?.charAt(0).toUpperCase()}
             </button>
           ) : (
             <button
