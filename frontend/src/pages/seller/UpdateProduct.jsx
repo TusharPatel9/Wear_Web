@@ -204,7 +204,7 @@ const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-2 py-4">
       <div className="bg-white rounded-2xl shadow-lg max-w-4xl w-full p-8 md:p-12">
-        <h2 className="text-3xl font-semibold text-teal-600 mb-2 text-center">
+        <h2 className="text-3xl font-semibold text-gray-900 mb-2 text-center">
           Update Product
         </h2>
 
@@ -240,7 +240,7 @@ const navigate = useNavigate();
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(img, index)}
-                    className="absolute top-1 right-1 bg-black text-white text-xs px-1 rounded"
+                    className="absolute top-1 right-1 bg-primary text-white text-xs px-1 rounded"
                   >
                     ✕
                   </button>
@@ -255,7 +255,7 @@ const navigate = useNavigate();
               type="text"
               placeholder="Product Title"
               {...register("title", validateSchema.titleValidator)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary"
             />
 
             {errors.title && (
@@ -271,7 +271,7 @@ const navigate = useNavigate();
               type="text"
               placeholder="Product Description"
               {...register("description", validateSchema.descriptionValidator)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary"
             />
 
             {errors.description && (
@@ -376,7 +376,7 @@ const navigate = useNavigate();
             <button
             onClick={()=> {navigate("/seller/products")}}
               type="submit"
-              className="bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-3 rounded-lg transition"
+              className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-lg transition"
             >
               Update Product
             </button>

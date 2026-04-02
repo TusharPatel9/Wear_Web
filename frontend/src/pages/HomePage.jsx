@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../AxiosInstance";
-import { IoHeartOutline, IoHeartSharp } from "react-icons/io5";
-import { FaHeart, FaStar } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const heroImages = [
-  "https://images.unsplash.com/photo-1523381210434-271e8be1f52b",
-  "https://images.unsplash.com/photo-1490481651871-ab68de25d43d",
-  "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
+  "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop", 
+  "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2070&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1618932260643-eadd6e589ec9?q=80&w=2070&auto=format&fit=crop", 
 ];
 
 function HomePage() {
   const [current, setCurrent] = useState(0);
-  const [productData, setProductData] = useState();
+  const [productData, setProductData] = useState([]);
   const [wishlist, setWishlist] = useState([]);
 
   const navigate = useNavigate();
@@ -31,54 +30,46 @@ function HomePage() {
       const response = await axiosInstance.get(`/product/products?limit=12`);
       setProductData(response.data.data);
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error.response?.data?.message || "Failed to fetch products");
     }
   };
 
   const getWishlist = async () => {
     try {
       const response = await axiosInstance.get("/wishlist/");
-
       const products = response.data.data.products;
-
-      // convert to array of IDs
       const productIds = products.map((item) => item._id);
-
       setWishlist(productIds);
-
-      console.log("wishlist ids:", productIds);
     } catch (error) {
-      toast.error(error.response.data.message);
+      // It's okay if it fails for unauthenticated users
     }
   };
 
   useEffect(() => {
     getProducts();
-    getWishlist();
+    if (localStorage.getItem("token")) {
+      getWishlist();
+    }
   }, []);
 
-  const toggleWishlist = async (productId) => {
+  const toggleWishlist = async (productId, e) => {
+    e.stopPropagation(); // prevent card click
     try {
       const token = localStorage.getItem("token");
 
       if (!token) {
         navigate("/login");
+        return;
+      }
+
+      if (wishlist.includes(productId)) {
+        await axiosInstance.post("/wishlist/remove", { productId });
+        setWishlist((prev) => prev.filter((item) => item !== productId));
+        toast.info("Removed from wishlist");
       } else {
-        if (wishlist?.includes(productId)) {
-          // 👉 REMOVE API
-          await axiosInstance.post("/wishlist/remove", {
-            productId,
-          });
-
-          setWishlist((prev) => prev.filter((item) => item !== productId));
-        } else {
-          // 👉 ADD API
-          await axiosInstance.post("/wishlist/add-to-wishlist", {
-            productId,
-          });
-
-          setWishlist((prev) => [...prev, productId]);
-        }
+        await axiosInstance.post("/wishlist/add-to-wishlist", { productId });
+        setWishlist((prev) => [...prev, productId]);
+        toast.success("Added to wishlist");
       }
     } catch (error) {
       console.error(error.response?.data || error.message);
@@ -86,163 +77,163 @@ function HomePage() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-white relative">
       {/* ================= HERO SECTION ================= */}
-      <section
-        className="h-[98vh] bg-cover bg-center flex items-center justify-center text-white transition-all duration-700"
-        style={{
-          backgroundImage: `url(${heroImages[current]})`,
-        }}
-      >
-        <div className="bg-black/50 w-full h-full flex flex-col items-center justify-center text-center px-6">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            Discover Your Style
-          </h1>
-          <p className="text-lg md:text-xl mb-8">
-            Trendy collections for Men, Women & Kids
+      <section className="relative h-[90vh] md:h-screen w-full overflow-hidden">
+        {heroImages.map((img, index) => (
+          <div
+            key={index}
+            className={`absolute top-0 left-0 w-full h-full transition-opacity duration-1000 ${
+              index === current ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <img src={img} alt="Hero" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-primary/30"></div>
+          </div>
+        ))}
+
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10 text-white">
+          <p className="text-sm tracking-[0.3em] uppercase mb-4 font-medium opacity-90">
+            Spring / Summer 2026
           </p>
-          <button className="bg-teal-600 px-8 py-3 rounded-md text-lg font-medium hover:bg-teal-700 transition">
-            Shop Now
-          </button>
-        </div>
-      </section>
-
-      {/* ================= PRODUCTS SECTION ================= */}
-      <section className="px-16 py-16 bg-gray-50">
-        <h2 className="text-3xl font-bold text-center mb-8">New Arrivals</h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-            {productData?.map((item) => (
-                          <div key={item._id} className="group cursor-pointer">
-                            {/* IMAGE */}
-                            <div className="relative">
-                              <img
-                                src={item.imagePaths[0]}
-                                className="h-72 w-full object-cover"
-                              />
-          
-                              {/* Wishlist */}
-                              <div
-                                onClick={() => toggleWishlist(item._id)}
-                                className="absolute top-3 right-3 bg-white p-2 rounded-full shadow"
-                              >
-                                <FaHeart
-                                  className={
-                                    wishlist.includes(item._id)
-                                      ? "text-red-500"
-                                      : "text-gray-300"
-                                  }
-                                />
-                              </div>
-          
-                              {/* Rating */}
-                              <div className="absolute bottom-2 left-2 bg-white text-xs px-2 py-1 flex items-center gap-1 shadow">
-                                <FaStar className="text-green-600 text-xs" />
-                                4.3 | 2.4k
-                              </div>
-                            </div>
-          
-                            {/* INFO */}
-                            <div className="mt-2 mb-3">
-                              <h3 className="text-sm font-semibold">
-                                {item.brand || "Brand"}
-                              </h3>
-                              <p className="text-xs text-gray-500 truncate">
-                                {item.title}
-                              </p>
-          
-                              <p className="text-sm font-semibold mt-1">
-                                ₹{item.price}
-                                <span className="text-gray-400 line-through text-xs ml-2">
-                                  ₹{item.price + 300}
-                                </span>
-                                <span className="text-orange-500 text-xs ml-2">
-                                  (30% OFF)
-                                </span>
-                              </p>
-                            </div>
-          
-                            <button
-                              onClick={() => navigate(`/productdetail/${item._id}`)}
-                              className="w-full bg-teal-600 text-white py-2 rounded-md hover:bg-teal-700 transition"
-                            >
-                              Buy Now
-                            </button>
-                          </div>
-                        ))}
-        </div>
-      </section>
-
-      {/* ================= MORE PRODUCTS SECTION ================= */}
-      {/* <section className="px-16 py-16">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          New Arrivals
-        </h2>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {products.map((item) => (
-            <div key={item.id} className="text-center group cursor-pointer">
-              <img
-                src={item.image}
-                alt=""
-                className="h-52 w-full object-cover rounded-lg group-hover:scale-105 transition"
-              />
-              <h4 className="mt-3 font-medium">{item.title}</h4>
-              <p className="text-teal-600 font-semibold">
-                ₹ {item.price}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section> */}
-
-      {/* ================= FOOTER ================= */}
-      <footer className="bg-gray-900 text-gray-300 px-16 py-12">
-        <div className="grid md:grid-cols-4 gap-10">
-          <div>
-            <h3 className="text-xl font-bold text-white mb-4">Wear Web</h3>
-            <p>
-              Your one-stop shop for premium fashion and lifestyle products.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-white mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li className="hover:text-white cursor-pointer">Men</li>
-              <li className="hover:text-white cursor-pointer">Women</li>
-              <li className="hover:text-white cursor-pointer">Kids</li>
-              <li className="hover:text-white cursor-pointer">Contact</li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-white mb-4">Customer Service</h4>
-            <ul className="space-y-2">
-              <li>Help Center</li>
-              <li>Returns</li>
-              <li>Shipping</li>
-              <li>Privacy Policy</li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-white mb-4">Subscribe</h4>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full px-3 py-2 rounded-md text-black"
-            />
-            <button className="mt-3 w-full bg-teal-600 py-2 rounded-md hover:bg-teal-700 transition">
-              Subscribe
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 leading-tight max-w-4xl">
+            ELEVATE YOUR <br className="hidden md:block"/> EVERYDAY STYLE
+          </h1>
+          <div className="flex gap-4">
+            <button 
+              onClick={() => document.getElementById("new-arrivals").scrollIntoView({ behavior: 'smooth' })}
+              className="bg-white text-black px-8 py-3.5 rounded-full text-sm font-semibold tracking-wide hover:scale-105 transition-transform"
+            >
+              SHOP NOW
             </button>
           </div>
         </div>
 
-        <div className="text-center mt-10 border-t border-gray-700 pt-6">
-          © 2026 Wear Web. All rights reserved.
+        {/* Dots */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+          {heroImages.map((_, idx) => (
+            <div
+              key={idx}
+              onClick={() => setCurrent(idx)}
+              className={`h-1.5 rounded-full cursor-pointer transition-all ${
+                current === idx ? "w-8 bg-white" : "w-1.5 bg-white/50"
+              }`}
+            />
+          ))}
         </div>
-      </footer>
+      </section>
+
+      {/* ================= PRODUCTS CATEGORY PREVIEW (Optional Enhancement) ================= */}
+      <section className="py-20 px-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+         <div onClick={() => navigate('/search?query=Women')} className="relative h-[60vh] group overflow-hidden rounded-2xl cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Women" />
+            <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors"></div>
+            <div className="absolute bottom-10 left-10 text-white">
+              <h3 className="text-3xl font-bold mb-2 tracking-tight">WOMEN</h3>
+              <p className="text-sm font-medium underline underline-offset-4 uppercase tracking-widest text-white/90">Discover</p>
+            </div>
+         </div>
+         <div onClick={() => navigate('/search?query=Men')} className="relative h-[60vh] group overflow-hidden rounded-2xl cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover top-1/4 group-hover:scale-105 transition-transform duration-700" alt="Men" />
+            <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors"></div>
+            <div className="absolute bottom-10 left-10 text-white">
+              <h3 className="text-3xl font-bold mb-2 tracking-tight">MEN</h3>
+              <p className="text-sm font-medium underline underline-offset-4 uppercase tracking-widest text-white/90">Discover</p>
+            </div>
+         </div>
+         <div onClick={() => navigate('/search?query=Kids')} className="relative h-[60vh] group overflow-hidden rounded-2xl cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Kids" />
+            <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors"></div>
+            <div className="absolute bottom-10 left-10 text-white">
+              <h3 className="text-3xl font-bold mb-2 tracking-tight">KIDS</h3>
+              <p className="text-sm font-medium underline underline-offset-4 uppercase tracking-widest text-white/90">Discover</p>
+            </div>
+         </div>
+      </section>
+
+      {/* ================= PRODUCTS SECTION ================= */}
+      <section id="new-arrivals" className="py-20 px-6 max-w-7xl mx-auto">
+        <div className="flex flex-col items-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">NEW ARRIVALS</h2>
+          <div className="h-1 w-16 bg-primary"></div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {productData?.map((item) => (
+            <div
+              key={item._id}
+              onClick={() => navigate(`/productdetail/${item._id}`)}
+              className="group cursor-pointer flex flex-col relative"
+            >
+              {/* IMAGE */}
+              <div className="relative overflow-hidden rounded-2xl bg-gray-100 aspect-[3/4]">
+                <img
+                  src={item.imagePaths[0]}
+                  alt={item.title}
+                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+
+                {/* Wishlist Icon */}
+                <button
+                  onClick={(e) => toggleWishlist(item._id, e)}
+                  className="absolute top-4 right-4 p-2.5 bg-white/80 backdrop-blur rounded-full opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all hover:bg-white shadow-sm"
+                >
+                  {wishlist.includes(item._id) ? (
+                    <FaHeart className="text-red-500 text-lg" />
+                  ) : (
+                    <FaRegHeart className="text-gray-900 text-lg" />
+                  )}
+                </button>
+              </div>
+
+              {/* INFO */}
+              <div className="mt-5 text-center flex-grow">
+                <h3 className="text-sm font-bold uppercase tracking-wide text-gray-900 mb-1">
+                  {item.brand || "Wear Web"}
+                </h3>
+                <p className="text-sm text-gray-500 truncate px-2 mb-2 w-full">
+                  {item.title}
+                </p>
+
+                <div className="flex items-center justify-center gap-3">
+                  <span className="text-base font-semibold text-gray-900">₹{item.price}</span>
+                  <span className="text-sm text-gray-400 line-through">₹{item.price + 300}</span>
+                  <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">30% OFF</span>
+                </div>
+              </div>
+
+              {/* Add to Cart Overlay Button */}
+              <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  className="w-full bg-primary text-white py-3 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors"
+                >
+                  VIEW PRODUCT
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* <div className="mt-16 text-center">
+            <button 
+              onClick={() => navigate("/search?query=")}
+              className="border border-black text-black px-10 py-3.5 rounded-full text-sm font-semibold tracking-wide hover:bg-primary hover:text-white transition-colors"
+            >
+              VIEW ALL PRODUCTS
+            </button>
+        </div> */}
+      </section>
+
+      {/* ================= BRAND HIGHLIGHT ================= */}
+      <section className="bg-gray-100 py-24 px-6 mt-10">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-6 tracking-tight">CRAFTED FOR YOU.</h2>
+          <p className="text-gray-600 text-lg leading-relaxed max-w-2xl mx-auto text-center font-light">
+            We merge minimalist design with high-quality fabrics perfectly curated to fit into your lifestyle. Discover pieces that transcend seasons.
+          </p>
+        </div>
+      </section>
+
     </div>
   );
 }

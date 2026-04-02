@@ -230,7 +230,7 @@ export default function SellerDashboard() {
               <Line
                 type="monotone"
                 dataKey="sales"
-                stroke="#008060"
+                stroke="#1a1a1a"
                 strokeWidth={3}
               />
             </LineChart>

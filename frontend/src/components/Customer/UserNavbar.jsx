@@ -102,34 +102,32 @@ function UserNavbar() {
       {/* NAVBAR */}
       <nav
         className={`fixed top-0 left-0 w-full z-50 h-16 flex items-center justify-between px-6 md:px-16 transition-all duration-300 ${
-          scrolled ? "bg-white/70 backdrop-blur-md shadow-md" : "bg-white"
+          scrolled ? "bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-100" : "bg-white"
         }`}
       >
         {/* LEFT */}
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-12">
           <h1
-            className="text-2xl md:text-3xl text-teal-600 cursor-pointer"
-            style={{ fontFamily: "Pacifico, cursive" }}
+            className="text-2xl font-bold tracking-tighter text-primary-black cursor-pointer"
             onClick={() => navigate("/")}
           >
-            Wear Web
+            WEAR WEB
           </h1>
 
           {/* DESKTOP MENU */}
-          <ul className="hidden md:flex gap-10 text-gray-700 font-medium relative">
+          <ul className="hidden md:flex gap-8 text-sm text-gray-800 font-medium relative">
             {categoryTree.map((mainCat) => (
-              <li className="group relative cursor-pointer px-1 py-4 hover:text-teal-600">
+              <li key={mainCat._id} className="group relative cursor-pointer px-1 py-5 hover:text-black transition-colors">
                 {mainCat.name}
 
                 {/* UNDERLINE */}
-                <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-teal-600 transition-all duration-300 group-hover:w-full"></span>
+                <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-primary transition-all duration-300 group-hover:w-full"></span>
 
-                {/* DROPDOWN */}
-                <div className="absolute left-0 top-full mt-1 w-max min-w-[400px] bg-white shadow-lg p-6 hidden group-hover:flex gap-10 z-[999] border-t-2 border-gray-200">
+                {/* DROPDOWN - MEGA MENU */}
+                <div className="absolute left-0 top-full mt-0 w-max min-w-[500px] bg-white shadow-xl p-8 hidden group-hover:flex gap-12 z-[999] border border-gray-100 rounded-b-2xl transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0">
                   {[...(mainCat.children || [])]
                     .sort((a, b) => {
                       const order = ["Top-Wear", "Bottom-Wear", "Foot-Wear"];
-
                       return order.indexOf(a.name) - order.indexOf(b.name);
                     })
                     .map((subCat) => (
@@ -137,18 +135,18 @@ function UserNavbar() {
                         key={subCat._id}
                         className="flex flex-col min-w-[150px]"
                       >
-                        <h3 className="text-red-500 font-semibold mb-2">
+                        <h3 className="text-black font-bold mb-4 tracking-wide text-xs uppercase border-b border-gray-100 pb-2">
                           {subCat.name}
                         </h3>
 
-                        <ul className="space-y-1 text-gray-600">
+                        <ul className="space-y-3 text-gray-500 text-sm">
                           {subCat.children?.map((child) => (
                             <li
                               key={child._id}
                               onClick={() =>
                                 navigate(`/products/category/${child._id}`)
                               }
-                              className="hover:text-teal-600 cursor-pointer"
+                              className="hover:text-black hover:translate-x-1 transition-all cursor-pointer"
                             >
                               {child.name}
                             </li>
@@ -163,14 +161,14 @@ function UserNavbar() {
         </div>
 
         {/* RIGHT */}
-        <div className="hidden md:flex items-center gap-8 text-gray-600">
+        <div className="hidden md:flex items-center gap-6 text-gray-800">
           {/* 🔥 SEARCH BAR */}
-          <div className="hidden md:flex items-center bg-gray-100 px-4 py-2 rounded-md w-[350px]">
+          <div className="hidden md:flex items-center bg-secondary-gray px-4 py-2.5 rounded-full w-[300px] hover:bg-gray-200 focus-within:bg-white focus-within:ring-1 focus-within:ring-black transition-all">
             <IoMdSearch className="text-gray-500 text-lg mr-2" />
 
             <input
               type="text"
-              placeholder="Search for products, brands and more"
+              placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
@@ -184,34 +182,38 @@ function UserNavbar() {
 
           {token ? (
             <button
-              className="w-10 h-10 bg-teal-600 rounded-full text-white"
+              className="w-9 h-9 flex items-center justify-center bg-primary rounded-full text-white font-medium hover:scale-105 hover:shadow-md transition-all"
               onClick={() => navigate("/profile")}
             >
               {name?.charAt(0).toUpperCase()}
             </button>
           ) : (
             <button
-              className="flex items-center gap-2 bg-teal-600 text-white px-4 py-2 rounded-md"
+              className="flex items-center gap-2 bg-primary text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-primary/90 shadow-sm transition-all"
               onClick={() => navigate("/login")}
             >
-              <CgProfile />
-              LOGIN
+              <CgProfile className="text-lg" />
+              Login
             </button>
           )}
 
-          <FaRegHeart
-            onClick={() => (token ? navigate("/wishlist") : navigate("/login"))}
-            className="text-xl cursor-pointer hover:text-teal-600"
-          />
+          <div className="flex items-center gap-5">
+            <FaRegHeart
+              onClick={() => (token ? navigate("/wishlist") : navigate("/login"))}
+              className="text-[22px] cursor-pointer hover:text-black transition-colors"
+            />
 
-          <TiShoppingCart
-            onClick={() => (token ? navigate("/cart") : navigate("/login"))}
-            className="text-xl cursor-pointer hover:text-teal-600"
-          />
+            <div className="relative">
+              <TiShoppingCart
+                onClick={() => (token ? navigate("/cart") : navigate("/login"))}
+                className="text-[24px] cursor-pointer hover:text-black transition-colors"
+              />
+            </div>
+          </div>
         </div>
 
         {/* MOBILE MENU BUTTON */}
-        <div className="md:hidden text-2xl">
+        <div className="md:hidden text-2xl text-black">
           {menuOpen ? (
             <HiX onClick={() => setMenuOpen(false)} />
           ) : (
@@ -222,14 +224,14 @@ function UserNavbar() {
 
       {/* MOBILE MENU */}
       {menuOpen && (
-        <div className="fixed top-16 left-0 w-full bg-white shadow-md md:hidden z-40">
-          <ul className="flex flex-col items-center gap-6 py-6 text-gray-700 font-medium">
+        <div className="fixed top-16 left-0 w-full bg-white shadow-xl md:hidden z-40 border-t border-gray-100 flex flex-col">
+          <ul className="flex flex-col gap-4 p-6 text-gray-800 font-medium">
             {categoryTree.map((cat) => (
-              <li key={cat._id}>{cat.name}</li>
+              <li key={cat._id} className="border-b border-gray-100 pb-2">{cat.name}</li>
             ))}
 
             <button
-              className="bg-teal-600 text-white px-6 py-2 rounded-md"
+              className="mt-4 bg-primary text-white w-full py-3 rounded-xl font-medium"
               onClick={() => navigate("/login")}
             >
               LOGIN
@@ -238,8 +240,7 @@ function UserNavbar() {
         </div>
       )}
 
-      {/* SPACER */}
-      <div className="h-16"></div>
+      {/* SPACER (Removed because we set main pt-16 in layout, but wait - let's check if layout has pt-16) */}
     </>
   );
 }

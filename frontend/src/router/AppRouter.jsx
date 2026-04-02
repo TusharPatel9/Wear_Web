@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 
 import Login from "../components/Login";
 import Register from "../components/Register";
@@ -69,6 +69,7 @@ const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
     children: [
+      { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: <SellerDashboard /> },
       { path: "addproduct", element: <AddProduct /> },
       { path: "updateproduct/:id", element: <UpdateProduct /> },

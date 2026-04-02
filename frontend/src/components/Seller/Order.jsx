@@ -101,7 +101,7 @@ export default function Order() {
       <h2 className="text-xl font-semibold mb-4">All Orders</h2>
 
       {/* Header */}
-      <div className="hidden md:grid grid-cols-[1fr_2fr_1.5fr_1fr_1fr] bg-black text-white p-3 rounded-md font-semibold">
+      <div className="hidden md:grid grid-cols-[1fr_2fr_1.5fr_1fr_1fr] bg-primary text-white p-3 rounded-md font-semibold">
         <p>Order Id</p>
         <p>Products</p>
         <p>Shipping Address</p>

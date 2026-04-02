@@ -50,7 +50,7 @@ export default function Products() {
       <h2 className="text-xl font-semibold mb-4">Products</h2>
 
       {/* Header */}
-      <div className="hidden md:grid grid-cols-[1.5fr_2fr_1fr_1fr_1fr_0.5fr_0.5fr] bg-black text-white p-3 rounded-md font-semibold text-md gap-6">
+      <div className="hidden md:grid grid-cols-[1.5fr_2fr_1fr_1fr_1fr_0.5fr_0.5fr] bg-primary text-white p-3 rounded-md font-semibold text-md gap-6">
         <p>Images</p>
         <p>Title</p>
         <p>Price</p>
@@ -122,7 +122,7 @@ export default function Products() {
                 />
               </div>
               {showModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="fixed inset-0 bg-primary/50 flex items-center justify-center z-50">
                   <div className="bg-gray-100 text-black w-[400px] rounded-lg shadow-lg overflow-hidden">
                     {/* Header */}
                     <div className="flex justify-between items-center p-4 border-b border-gray-600">

@@ -193,7 +193,7 @@ export default function AddProduct() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-2 py-4">
       <div className="bg-white rounded-2xl shadow-lg max-w-4xl w-full p-8 md:p-12">
-        <h2 className="text-3xl font-semibold text-teal-600 mb-2 text-center">
+        <h2 className="text-3xl font-semibold text-gray-900 mb-2 text-center">
           Add Product
         </h2>
 
@@ -231,7 +231,7 @@ export default function AddProduct() {
                       setImages((prev) => prev.filter((_, i) => i !== index));
                       setPreview((prev) => prev.filter((_, i) => i !== index));
                     }}
-                    className="absolute top-1 right-1 bg-black text-white text-xs px-1 rounded"
+                    className="absolute top-1 right-1 bg-primary text-white text-xs px-1 rounded"
                   >
                     ✕
                   </button>
@@ -262,7 +262,7 @@ export default function AddProduct() {
               type="text"
               placeholder="Product Title"
               {...register("title", validateSchema.titleValidator)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary"
             />
 
             {errors.title && (
@@ -278,7 +278,7 @@ export default function AddProduct() {
               type="text"
               placeholder="Product Description"
               {...register("description", validateSchema.descriptionValidator)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-500"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary"
             />
 
             {errors.description && (
@@ -436,7 +436,7 @@ export default function AddProduct() {
           <div className="text-center mt-6">
             <button
               type="submit"
-              className="bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-3 rounded-lg transition"
+              className="bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-3 rounded-lg transition"
             >
               Add Product
             </button>

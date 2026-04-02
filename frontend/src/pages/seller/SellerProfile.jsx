@@ -7,7 +7,7 @@ const ReusableModal = ({ open, title, onClose, children }) => {
     if (!open) return null;
 
     return (
-        <div className="absolute inset-0 backdrop-blur-sm bg-black/5 flex justify-center items-center z-40">
+        <div className="absolute inset-0 backdrop-blur-sm bg-primary/5 flex justify-center items-center z-40">
 
             {/* overlay */}
             <div
@@ -114,7 +114,7 @@ export default function SellerProfile() {
                 {/* ================= PROFILE ================= */}
                 <div className="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row items-center gap-6">
                     <button
-                        className="w-24 h-24 bg-teal-600 text-4xl rounded-full text-white border"
+                        className="w-24 h-24 bg-primary text-4xl rounded-full text-white border"
                     >
                         {userData?.name.charAt(0)}
                     </button>

@@ -33,10 +33,10 @@ function SellerSidebar() {
             key={index}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center gap-4 px-5 py-3 text-[16px]
-              ${isActive
-                ? "bg-teal-600 text-white rounded-full"
-                : "text-teal-600"
+              `flex items-center gap-4 px-6 py-4 text-[15px] font-semibold transition-all border-l-4 ${
+                isActive
+                  ? "border-secondary text-secondary bg-soft-beige"
+                  : "border-transparent text-gray-600 hover:text-secondary hover:bg-gray-50"
               }`
             }
           >
@@ -47,14 +47,14 @@ function SellerSidebar() {
       </div>
 
       {/* Bottom */}
-      <div className="px-5 pb-6 flex flex-col gap-4">
+      <div className="flex flex-col">
         <NavLink
           to="profile"
           className={({ isActive }) =>
-            `flex items-center gap-4 px-5 py-3 text-[16px]
-            ${isActive
-              ? "bg-teal-600 text-white rounded-full"
-              : "text-teal-600"
+            `flex items-center gap-4 px-6 py-4 text-[15px] font-semibold transition-all border-l-4 ${
+              isActive
+                ? "border-secondary text-secondary bg-soft-beige"
+                : "border-transparent text-gray-600 hover:text-secondary hover:bg-gray-50"
             }`
           }
         >
@@ -64,11 +64,11 @@ function SellerSidebar() {
 
         <button
           onClick={() => {
-            { localStorage.removeItem("token") }
-            { localStorage.removeItem("role") }
-            navigate("/login")
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+            navigate("/login");
           }}
-          className="flex items-center gap-4 px-5 py-3 text-teal-600"
+          className="flex items-center gap-4 px-6 py-4 text-[15px] font-semibold border-l-4 border-transparent text-gray-600 hover:text-secondary hover:bg-gray-50 transition-all w-full text-left"
         >
           <MdLogout className="text-xl" />
           Logout
