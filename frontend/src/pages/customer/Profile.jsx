@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { MdEdit } from "react-icons/md";
+import { toast } from "react-toastify";
 import axiosInstance from "../../AxiosInstance";
 
 export default function Profile() {
-  const [userData, setUserData] = useState();
+  const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", mobile: "" });
+  const [isSaving, setIsSaving] = useState(false);
 
   const getCustomerDetail = async () => {
     try {
       setLoading(true);
       const res = await axiosInstance.get("/user/profile");
-      setUserData(res.data.data.userObj);
+      const uData = res.data.data.userObj;
+      setUserData(uData);
+      setFormData({
+        name: uData.name || "",
+        email: uData.email || "",
+        mobile: uData.mobile || "",
+      });
     } catch (error) {
       console.error(error);
     } finally {
@@ -22,74 +32,114 @@ export default function Profile() {
     getCustomerDetail();
   }, []);
 
+  const handleEditToggle = async () => {
+    if (!isEditing) {
+      setIsEditing(true);
+    } else {
+      // Save changes
+      try {
+        setIsSaving(true);
+        const res = await axiosInstance.put("/user/profile", formData);
+        if (res.data.success) {
+          toast.success("Profile updated perfectly!");
+          setUserData(res.data.userObj);
+          setIsEditing(false);
+        }
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Failed to update profile");
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   if (loading) {
     return (
-        <div className="flex justify-center items-center h-64">
-           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-        </div>
+      <div className="flex justify-center items-center h-[60vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+      </div>
     );
   }
 
   return (
-    <div className="w-full">
-      <div className="mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-black uppercase">My Profile</h2>
-        <p className="text-sm text-gray-500 mt-2">Manage your personal information and preferences.</p>
+    <div className="w-full max-w-2xl bg-white md:p-8">
+      {/* Header */}
+      <h2 className="text-xl font-bold text-gray-800 mb-4">Profile Details</h2>
+      <hr className="border-gray-100 mb-8" />
+
+      {/* Details Table-like Grid */}
+      <div className="space-y-6 text-[15px]">
+        {/* Full Name */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center">
+          <p className="text-gray-500 md:col-span-1">Full Name</p>
+          <div className="md:col-span-2">
+            {isEditing ? (
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-black"
+                placeholder="Enter full name"
+              />
+            ) : (
+              <p className="text-gray-800">{userData?.name || "—"}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Number */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center">
+          <p className="text-gray-500 md:col-span-1">Mobile Number</p>
+          <div className="md:col-span-2">
+            {isEditing ? (
+              <input
+                type="text"
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-black"
+                placeholder="Enter mobile number"
+              />
+            ) : (
+              <p className="text-gray-800">{userData?.mobile || "- not added -"}</p>
+            )}
+          </div>
+        </div>
+
+        {/* Email ID */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 items-center">
+          <p className="text-gray-500 md:col-span-1">Email ID</p>
+          <div className="md:col-span-2">
+            {isEditing ? (
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full border border-gray-300 rounded px-3 py-2 outline-none focus:border-black"
+                placeholder="Enter email address"
+              />
+            ) : (
+              <p className="text-gray-800">{userData?.email || "—"}</p>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Profile Card */}
-      <div className="bg-white text-left p-6 max-w-2xl transition-all border border-gray-100">
-        {/* Avatar & Basic Info */}
-        <div className="flex items-center gap-6 mb-10 pb-10 border-b border-gray-100">
-          <div className="w-20 h-20 rounded-full bg-gray-100 text-secondary flex items-center justify-center text-3xl font-bold shadow-inner border border-gray-200">
-            {userData?.name?.charAt(0) || "U"}
-          </div>
-          <div>
-            <h3 className="text-xl font-bold tracking-tight text-gray-900 uppercase">
-              {userData?.name}
-            </h3>
-            <p className="text-gray-500 text-sm mt-1">{userData?.email}</p>
-          </div>
-        </div>
-
-        {/* Info Fields */}
-        <div className="space-y-6">
-          {/* Name */}
-          <div className="flex justify-between items-center group cursor-pointer hover:bg-gray-50 p-4 -mx-4 transition-colors">
-            <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Full Name</p>
-              <p className="font-bold text-gray-900">{userData?.name}</p>
-            </div>
-            <MdEdit className="text-gray-400 group-hover:text-secondary transition-colors" size={20}/>
-          </div>
-
-          {/* Email */}
-          <div className="flex justify-between items-center group cursor-pointer hover:bg-gray-50 p-4 -mx-4 transition-colors">
-            <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Email Address</p>
-              <p className="font-bold text-gray-900">{userData?.email}</p>
-            </div>
-            <MdEdit className="text-gray-400 group-hover:text-secondary transition-colors" size={20}/>
-          </div>
-
-          {/* Phone */}
-          <div className="flex justify-between items-center group cursor-pointer hover:bg-gray-50 p-4 -mx-4 transition-colors">
-            <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Phone Number</p>
-              <p className="font-bold text-gray-900 whitespace-pre-wrap">
-                {userData?.phone || "Not provided"}
-              </p>
-            </div>
-            <MdEdit className="text-gray-400 group-hover:text-secondary transition-colors" size={20}/>
-          </div>
-        </div>
-
-        {/* Update Button */}
-        <div className="mt-10">
-          <button className="w-full bg-primary text-white py-3.5 rounded-sm text-sm font-bold tracking-widest uppercase hover:bg-primary/90 transition-colors shadow-sm">
-            Edit Profile
-          </button>
-        </div>
+      {/* Edit Button */}
+      <div className="mt-12">
+        <button
+          onClick={handleEditToggle}
+          disabled={isSaving}
+          className="bg-primary hover:bg-black text-white font-bold tracking-wide uppercase py-3 px-10 rounded-sm transition-colors text-sm w-full md:w-auto md:min-w-[300px] disabled:opacity-50"
+        >
+          {isSaving ? "SAVING..." : isEditing ? "SAVE" : "EDIT"}
+        </button>
       </div>
     </div>
   );

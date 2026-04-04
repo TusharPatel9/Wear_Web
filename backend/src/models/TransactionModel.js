@@ -30,9 +30,7 @@ const transactionSchema = new mongoose.Schema({
         enum: ["Success", "Failed"],
         required: true
     },
-
-
-
+    
 }, {
     timestamps: true,
 });

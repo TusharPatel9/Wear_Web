@@ -1,17 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import {
-  MdShoppingBag,
-  MdPerson,
-  MdLocationOn,
-  MdLogout,
-} from "react-icons/md";
+import axiosInstance from "../../AxiosInstance";
 
 function CustomerProfileSidebar() {
   const navigate = useNavigate();
+  const [userName, setUserName] = useState("Loading...");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axiosInstance.get("/user/profile");
+        setUserName(res.data.data.userObj.name);
+      } catch (error) {
+        setUserName("Customer");
+      }
+    };
+    fetchUser();
+  }, []);
 
   const menuItems = [
-    { name: "Overview", path: "profile" },
+    { name: "Profile", path: "profile" },
     { name: "Orders", path: "orders" },
     { name: "Addresses", path: "addresses" },
   ];
@@ -26,7 +34,7 @@ function CustomerProfileSidebar() {
     <div className="w-full lg:w-64 bg-white lg:border-r lg:border-gray-100 min-h-screen py-8 flex flex-col">
       <div className="px-6 mb-8 border-b border-gray-100 pb-6">
         <h2 className="text-sm font-bold text-gray-900 tracking-wide uppercase">Account</h2>
-        <p className="text-xs text-gray-500 mt-1">user@wearweb.com</p>
+        <p className="text-xs text-gray-500 mt-1 capitalize">{userName}</p>
       </div>
 
       <div className="flex flex-col">

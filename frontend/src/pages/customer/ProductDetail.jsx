@@ -195,8 +195,8 @@ function ProductDetail() {
             <div className="flex items-start gap-4 text-gray-800">
               <FaTruck className="text-xl mt-0.5" />
               <div>
-                <p className="font-semibold text-sm">Free Shipping & Returns</p>
-                <p className="text-xs text-gray-500 mt-1">On all orders over ₹999</p>
+                <p className="font-semibold text-sm">Free Shipping</p>
+                <p className="text-xs text-gray-500 mt-1">On all orders</p>
               </div>
             </div>
 
@@ -204,7 +204,7 @@ function ProductDetail() {
               <MdPayment className="text-xl mt-0.5" />
               <div>
                 <p className="font-semibold text-sm">Pay on Delivery Available</p>
-                <p className="text-xs text-gray-500 mt-1">Cash or card on delivery</p>
+                <p className="text-xs text-gray-500 mt-1">Cash on delivery</p>
               </div>
             </div>
           </div>

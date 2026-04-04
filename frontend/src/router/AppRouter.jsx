@@ -11,6 +11,9 @@ import HomePage from "../pages/HomePage";
 import SellerLayout from "../components/Seller/SellerLayout";
 import AdminLayout from "../components/Admin/AdminLayout";
 import AdminDashboard from "../components/Admin/AdminDashboard";
+import UsersManagement from "../components/Admin/UsersManagement";
+import SellersManagement from "../components/Admin/SellersManagement";
+import CategoryManagement from "../components/Admin/CategoryManagement";
 import CustomerProfileLayout from "../components/Customer/CustomerProfileLayout";
 import Order from "../components/Seller/Order";
 import ProtectedRoutes from "../components/ProtectedRoutes";
@@ -29,6 +32,7 @@ import Orders from "../pages/customer/Orders";
 import Address from "../pages/customer/Address";
 import OrderDetails from "../pages/customer/OrderDetails";
 import SellerDashboard from "../pages/seller/SellerDashboard";
+import Payment from "../pages/seller/Payment";
 
 const router = createBrowserRouter([
   {
@@ -75,6 +79,7 @@ const router = createBrowserRouter([
       { path: "updateproduct/:id", element: <UpdateProduct /> },
       { path: "orders", element: <Order /> },
       { path: "products", element: <Products /> },
+      { path: "payment", element: <Payment /> },
       { path: "profile", element: <SellerProfile /> },
     ],
   },
@@ -87,8 +92,11 @@ const router = createBrowserRouter([
       </ProtectedRoutes>
     ),
     children: [
+      { index: true, element: <Navigate to="dashboard" replace /> },
       { path: "dashboard", element: <AdminDashboard /> },
-      // {path: "dashboard",element: <AdminDashboard />},
+      { path: "users", element: <UsersManagement /> },
+      { path: "sellers", element: <SellersManagement /> },
+      { path: "categories", element: <CategoryManagement /> },
     ],
   },
 ]);

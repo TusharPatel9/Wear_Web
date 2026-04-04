@@ -5,7 +5,7 @@ const Product = require("../models/ProductModel");
 exports.placeOrder = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { addressId } = req.body;
+    const { addressId, paymentMethod = "COD", paymentStatus = "Unpaid" } = req.body;
 
     const cart = await Cart.findOne({ userId });
 
@@ -54,6 +54,8 @@ exports.placeOrder = async (req, res) => {
         addressId,
         items: sellerMap[sellerId].items,
         totalAmount: sellerMap[sellerId].totalAmount,
+        paymentMethod,
+        paymentStatus,
       });
 
       orders.push(order);
@@ -103,7 +105,9 @@ exports.getSellerOrders = async (req, res) => {
 
     const orders = await Order.find({ sellerId })
       .populate("items.productId")
-      .populate("userId", "name email");
+      .populate("userId", "name email")
+      .populate("addressId")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -130,6 +134,35 @@ exports.updateOrderStatus = async (req, res) => {
     res.status(200).json({
       success: true,
       data:order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.getOrderById = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+
+    const order = await Order.findById(orderId)
+      .populate("items.productId")
+      .populate("addressId");
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    // Optional: make sure only the owner or seller can view it. Assuming customer route:
+    if (order.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: "Unauthorized" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: order,
     });
   } catch (error) {
     res.status(500).json({

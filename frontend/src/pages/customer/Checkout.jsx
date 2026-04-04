@@ -3,7 +3,10 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../AxiosInstance";
 import { assets } from "../../assets/assets";
 
+import { useNavigate } from "react-router-dom";
+
 function Checkout() {
+  const navigate = useNavigate();
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -70,7 +73,23 @@ function Checkout() {
     }
   };
 
-  const handleCheckout = () => {
+  const placeOrderInDB = async (paymentMethod, paymentStatus) => {
+    try {
+      const res = await axiosInstance.post("/order/place", {
+        addressId: selectedAddress,
+        paymentMethod,
+        paymentStatus
+      });
+      if (res.data.success) {
+        toast.success("Order placed successfully!");
+        navigate("/profile/orders");
+      }
+    } catch (error) {
+       toast.error("Failed to place order.");
+    }
+  };
+
+  const handleCheckout = async () => {
     if (!selectedAddress) {
       toast.warn("Please select a delivery address.");
       return;
@@ -80,7 +99,55 @@ function Checkout() {
       return;
     }
     
-    toast.info(`Proceeding to pay with ${paymentGateway}`);
+    if (paymentGateway === 'cod') {
+      await placeOrderInDB("COD", "Unpaid");
+    } else if (paymentGateway === 'razorpay') {
+      try {
+        const orderRes = await axiosInstance.get("/payment/create-order");
+        if (orderRes.data.success) {
+          const options = {
+            key: import.meta.env.VITE_RAZORPAY_API_KEY,
+            amount: orderRes.data.order.amount,
+            currency: "INR",
+            name: "Wear_Web",
+            description: "Thanks for shopping with us!",
+            image: assets.logo || "",
+            order_id: orderRes.data.order.id,
+            handler: async (response) => {
+              try {
+                const verifyRes = await axiosInstance.post("/payment/verify", {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                });
+
+                if (verifyRes.data.success) {
+                  await placeOrderInDB("Online", "Paid");
+                }
+              } catch (verifyError) {
+                toast.error("Payment verification failed.");
+              }
+            },
+            prefill: {
+              name: "Current User",
+              email: "test@example.com",
+              contact: "9999999999"
+            },
+            theme: {
+              color: "#000000"
+            }
+          };
+
+          const rzp = new window.Razorpay(options);
+          rzp.on("payment.failed", function (response) {
+            toast.error("Payment failed. Please try again.");
+          });
+          rzp.open();
+        }
+      } catch (error) {
+        toast.error("Failed to initiate Razorpay checkout.");
+      }
+    }
   };
 
   const totalPrice = cart?.items?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;

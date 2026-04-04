@@ -2,31 +2,25 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   MdDashboard,
-  MdLocalOffer,
-  MdAdd,
-  MdHome,
-  MdElectricalServices,
+  MdGroup,
+  MdStorefront,
   MdCategory,
-  MdLocalMall,
   MdLogout,
+  MdPerson,
 } from "react-icons/md";
 
 function AdminSidebar() {
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: "Dashboard", path: "dashboard", icon: <MdDashboard /> },
-    { name: "Coupons", path: "coupons", icon: <MdLocalOffer /> },
-    { name: "Add New Coupon", path: "add-coupon", icon: <MdAdd /> },
-    { name: "Home Page", path: "home", icon: <MdHome /> },
-    { name: "Electronics Category", path: "electronics", icon: <MdElectricalServices /> },
-    { name: "Shop By Category", path: "shop-category", icon: <MdCategory /> },
-    { name: "Deals", path: "deals", icon: <MdLocalMall /> },
+    { name: "Dashboard", path: "/admin/dashboard", icon: <MdDashboard /> },
+    { name: "Users", path: "/admin/users", icon: <MdGroup /> },
+    { name: "Sellers", path: "/admin/sellers", icon: <MdStorefront /> },
+    { name: "Categories", path: "/admin/categories", icon: <MdCategory /> },
   ];
 
   return (
     <div className="w-64 bg-white border-r border-gray-200 flex flex-col justify-between">
-
       {/* Menu */}
       <div className="mt-8 flex flex-col gap-7 px-5">
         {menuItems.map((item, index) => (
@@ -34,11 +28,10 @@ function AdminSidebar() {
             key={index}
             to={item.path}
             className={({ isActive }) =>
-              `flex items-center gap-4 px-5 py-3 text-[16px]
-              ${
+              `flex items-center gap-4 px-6 py-4 text-[15px] font-semibold transition-all border-l-4 ${
                 isActive
-                  ? "bg-teal-600 text-white rounded-full"
-                  : "text-teal-600"
+                  ? "border-secondary text-secondary bg-soft-beige"
+                  : "border-transparent text-gray-600 hover:text-secondary hover:bg-gray-50"
               }`
             }
           >
@@ -48,11 +41,29 @@ function AdminSidebar() {
         ))}
       </div>
 
-      {/* Logout */}
-      <div className="px-5 pb-6">
+      {/* Bottom */}
+      <div className="flex flex-col">
+        <NavLink
+          to="/admin/profile"
+          className={({ isActive }) =>
+            `flex items-center gap-4 px-6 py-4 text-[15px] font-semibold transition-all border-l-4 ${
+              isActive
+                ? "border-secondary text-secondary bg-soft-beige"
+                : "border-transparent text-gray-600 hover:text-secondary hover:bg-gray-50"
+            }`
+          }
+        >
+          <MdPerson className="text-xl" />
+          Account
+        </NavLink>
+
         <button
-          onClick={() => navigate("/login")}
-          className="flex items-center gap-4 px-5 py-3 text-teal-600"
+          onClick={() => {
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+            navigate("/login");
+          }}
+          className="flex items-center gap-4 px-6 py-4 text-[15px] font-semibold border-l-4 border-transparent text-gray-600 hover:text-secondary hover:bg-gray-50 transition-all w-full text-left"
         >
           <MdLogout className="text-xl" />
           Logout

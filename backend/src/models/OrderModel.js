@@ -57,6 +57,12 @@ const orderSchema = new mongoose.Schema({
         default: "Unpaid"
     },
 
+    paymentMethod: {
+        type: String,
+        enum: ["COD", "Online"],
+        default: "COD"
+    },
+
     orderDate: {
         type: Date,
         default: Date.now

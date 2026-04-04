@@ -1,100 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import axiosInstance from "../../AxiosInstance";
 
 export default function Order() {
-  const orders = [
-    {
-      _id: "69c37478f62c0e1b4625abfe",
-      userId: {
-        _id: "user1",
-        name: "Raam",
-        mobile: "9033447830",
-        email: "raam@gmail.com",
-      },
-      addressId: {
-        name: "Raam",
-        area: "Gujarat Unity",
-        city: "Rajkot",
-        state: "Gujarat",
-        pincode: "360001",
-      },
-      sellerId: {
-        _id: "seller1",
-        name: "Demo Seller",
-      },
-      items: [
-        {
-          productId: {
-            _id: "prod1",
-            title: "Boult Mirage 1.39 Screen Smartwatch",
-            price: 2299,
-            colors: ["Gold"],
-            size: ["FREE"],
-            imagePaths: [
-              "https://media.istockphoto.com/id/1941897677/photo/broken-or-cracked-watch-or-wristwatches-without-strap-on-a-concrete-surface.jpg?s=2048x2048&w=is&k=20&c=yZbj2AnhPGLR-8IxvqscTvePNFhaBfqkApDr41ViHK0=",
-            ],
-          },
-          quantity: 1,
-          price: 2299,
-        },
-      ],
-      totalAmount: 2299,
-      orderStatus: "PENDING",
-      paymentStatus: "Paid",
-      orderDate: "2026-03-19T10:00:00Z",
-    },
-    {
-      _id: "69c37478f62c0e1b4625f23a",
-      userId: {
-        _id: "user2",
-        name: "Raamu Chacha",
-        mobile: "9133447810",
-        email: "raamu@gmail.com",
-      },
-      addressId: {
-        name: "Raamu Chacha",
-        area: "Street 1 2 3",
-        city: "Rajkot",
-        state: "Gujarat",
-        pincode: "360001",
-      },
-      sellerId: {
-        _id: "seller1",
-        name: "Demo Seller",
-      },
-      items: [
-        {
-          productId: {
-            _id: "prod2",
-            title: "Embroidered Bollywood Net Saree (Red)",
-            price: 1599,
-            colors: ["Red"],
-            size: ["FREE"],
-            imagePaths: [
-              "https://images.unsplash.com/photo-1727430228383-aa1fb59db8bf?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8U2FyZWV8ZW58MHx8MHx8fDA%3D",
-            ],
-          },
-          quantity: 1,
-          price: 1599,
-        },
-      ],
-      totalAmount: 1599,
-      orderStatus: "CONFIRMED",
-      paymentStatus: "Unpaid",
-      orderDate: "2026-03-18T09:30:00Z",
-    },
-  ];
-
-  const [ordersData, setOrdersData] = useState(orders);
+  const [ordersData, setOrdersData] = useState([]);
   const [activeSelect, setActiveSelect] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleStatusChange = (orderId, newStatus) => {
-    const updated = ordersData.map((order) =>
-      order._id === orderId ? { ...order, orderStatus: newStatus } : order,
-    );
-
-    setOrdersData(updated);
-    setActiveSelect(null);
+  const fetchOrders = async () => {
+    try {
+      const res = await axiosInstance.get("/order/seller-orders");
+      if (res.data.success) {
+        setOrdersData(res.data.data);
+      }
+    } catch (error) {
+      toast.error("Failed to load seller orders");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const res = await axiosInstance.put("/order/status", { orderId, status: newStatus });
+      if (res.data.success) {
+        toast.success("Order status updated");
+        setOrdersData(ordersData.map((order) =>
+          order._id === orderId ? { ...order, orderStatus: newStatus } : order
+        ));
+      } else {
+        toast.error("Failed to update status");
+      }
+    } catch (error) {
+      toast.error("Error updating status");
+    } finally {
+      setActiveSelect(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="p-4 bg-gray-100 min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 bg-gray-100 min-h-screen">
@@ -121,15 +75,15 @@ export default function Order() {
               {order.items.map((item, index) => (
                 <div key={index} className="flex gap-3">
                   <img
-                    src={item.productId.imagePaths[0]}
+                    src={item.productId?.imagePaths?.[0] || 'https://via.placeholder.com/80'}
                     className="w-20 h-24 object-cover rounded"
                     alt=""
                   />
                   <div className="text-md">
-                    <p className="font-medium">{item.productId.title}</p>
-                    <p>Price: ₹{item.productId.price}</p>
-                    <p>Color: {item.productId.colors[0]}</p>
-                    <p>Size: {item.productId.size[0]}</p>
+                    <p className="font-medium">{item.productId?.title || 'Unknown Product'}</p>
+                    <p>Price: ₹{item.price}</p>
+                    <p>Color: {item.productId?.colors?.[0] || 'N/A'}</p>
+                    <p>Size: {item.productId?.size?.[0] || 'N/A'}, Qty: {item.quantity}</p>
                   </div>
                 </div>
               ))}
@@ -137,13 +91,15 @@ export default function Order() {
 
             {/* Address */}
             <div className="text-md text-gray-700">
-              <p className="font-medium">{order.addressId.name}</p>
-              <p>{order.addressId.area}</p>
-              <p>{order.addressId.city}</p>
+              <p className="font-medium">{order.userId?.name || "N/A"}</p>
+              <p>{order.addressId?.area || "N/A"}</p>
+              <p>{order.addressId?.city || "N/A"}</p>
               <p>
-                {order.addressId.state} - {order.addressId.pincode}
+                {order.addressId?.state || "N/A"} - {order.addressId?.pincode || "N/A"}
               </p>
-              <p className="mt-1 font-medium">Mobile: {order.userId.mobile}</p>
+              <p className="mt-1 font-medium">
+                Mobile: {order.addressId?.mobile || order.userId?.mobile || "N/A"}
+              </p>
             </div>
 
             {/* Status */}
@@ -151,13 +107,13 @@ export default function Order() {
               <span
                 className={`px-4 py-1 text-xs rounded-full border font-medium
                   ${
-                    order.orderStatus === "PENDING"
+                    order.orderStatus === "Pending"
                       ? "text-yellow-600 border-yellow-400 bg-yellow-50"
-                      : order.orderStatus === "CONFIRMED"
+                      : order.orderStatus === "Placed" || order.orderStatus === "Confirmed"
                         ? "text-green-600 border-green-400 bg-green-50"
-                        : order.orderStatus === "SHIPPED"
+                        : order.orderStatus === "Shipped"
                           ? "text-blue-600 border-blue-400 bg-blue-50"
-                          : order.orderStatus === "DELIVERED"
+                          : order.orderStatus === "Delivered"
                             ? "text-purple-600 border-purple-400 bg-purple-50"
                             : "text-gray-600 border-gray-300 bg-gray-50"
                   }
@@ -181,12 +137,11 @@ export default function Order() {
               {activeSelect === order._id && (
                 <div className="absolute right-0 top-8 w-40 bg-white shadow-lg rounded-md border z-50">
                   {[
-                    "PENDING",
-                    "PLACED",
-                    "CONFIRMED",
-                    "SHIPPED",
-                    "DELIVERED",
-                    "CANCELLED",
+                    "Pending",
+                    "Placed",
+                    "Shipped",
+                    "Delivered",
+                    "Cancelled",
                   ].map((statusOption) => (
                     <p
                       key={statusOption}

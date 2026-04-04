@@ -250,3 +250,45 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ success: false, message: "Error resetting password", error: error.message });
   }
 };
+
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const id = req.user._id;
+    const { name, email, mobile } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    if (name) user.name = name;
+    if (mobile) user.mobile = mobile;
+    
+    // Warning: typically if emails are changed, further verification is needed.
+    // For this implementation, allowing straight update if valid.
+    if (email && email !== user.email) {
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail && existingEmail._id.toString() !== id.toString()) {
+        return res.status(400).json({ success: false, message: "Email is already taken" });
+      }
+      user.email = email;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      userObj: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile,
+        role: user.role
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error updating profile", error: error.message });
+  }
+};
