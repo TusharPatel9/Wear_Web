@@ -110,12 +110,7 @@ export default function SellerDashboard() {
       icon: <MdAttachMoney size={28} />,
       color: "bg-green-100 text-green-600",
     },
-    {
-      title: "Pending Orders",
-      value: statsData.pendingOrders,
-      icon: <MdPendingActions size={28} />,
-      color: "bg-orange-100 text-orange-600",
-    },
+    
   ];
 
   if (loading) {
@@ -134,7 +129,7 @@ export default function SellerDashboard() {
       </h2>
 
       {/* ================= STATS ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((item, index) => (
           <div
             key={index}

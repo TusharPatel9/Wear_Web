@@ -1,9 +1,10 @@
-const paymentRoutes = require("express").Router();
+const express = require("express");
+const paymentRouter = express.Router();
 
-const { validateToken, isCustomer } = require("../middleware/AuthMiddleware");
 const { createRazorpayOrder, verifyPayment } = require("../controllers/PaymentController");
+const { validateToken, isCustomer } = require("../middleware/AuthMiddleware");
 
-paymentRoutes.get("/create-order", validateToken, isCustomer, createRazorpayOrder);
-paymentRoutes.post("/verify", validateToken, isCustomer, verifyPayment);
+paymentRouter.get("/create-order", validateToken, isCustomer, createRazorpayOrder);
+paymentRouter.post("/verify", validateToken, isCustomer, verifyPayment);
 
-module.exports = paymentRoutes;
+module.exports = paymentRouter; 

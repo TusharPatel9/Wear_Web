@@ -57,7 +57,7 @@ function CustomerProfileSidebar() {
         {/* Top/Inline Side Logout Button as per user request */}
         <button
           onClick={logoutHandler}
-          className="w-full text-left px-6 py-4 text-[15px] font-semibold border-l-4 border-transparent text-gray-600 hover:text-secondary hover:bg-gray-50 transition-all flex items-center justify-between"
+          className="w-full text-left px-6 py-4 text-[15px] font-semibold border-l-4 border-transparent text-red-600 hover:text-secondary hover:bg-gray-50 transition-all flex items-center justify-between"
         >
           Logout
         </button>

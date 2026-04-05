@@ -61,7 +61,7 @@ function AdminDashboard() {
         />
         <StatsCard
           title="Total Revenue"
-          value={`$${stats.totalRevenue.toFixed(2)}`}
+          value={`₹${stats.totalRevenue.toFixed(2)}`}
           icon={<MdAttachMoney />}
           colorClass="text-green-600 bg-green-50"
         />

@@ -33,7 +33,7 @@ function Checkout() {
         if (addressRes.data.data.length > 0) {
           setSelectedAddress(addressRes.data.data[0]._id);
         } else {
-          setShowAddressForm(true); 
+          setShowAddressForm(true);
         }
       }
 
@@ -85,7 +85,7 @@ function Checkout() {
         navigate("/profile/orders");
       }
     } catch (error) {
-       toast.error("Failed to place order.");
+      toast.error("Failed to place order.");
     }
   };
 
@@ -98,9 +98,20 @@ function Checkout() {
       toast.warn("Please choose a payment method.");
       return;
     }
-    
+
     if (paymentGateway === 'cod') {
-      await placeOrderInDB("COD", "Unpaid");
+      try {
+        const res = await axiosInstance.post("/order/place-cod", {
+          addressId: selectedAddress
+        });
+
+        if (res.data.success) {
+          toast.success("Order placed successfully!");
+          navigate("/profile/orders");
+        }
+      } catch (error) {
+        toast.error("Failed to place order.");
+      }
     } else if (paymentGateway === 'razorpay') {
       try {
         const orderRes = await axiosInstance.get("/payment/create-order");
@@ -113,16 +124,23 @@ function Checkout() {
             description: "Thanks for shopping with us!",
             image: assets.logo || "",
             order_id: orderRes.data.order.id,
+            method: {
+              upi: true,
+              card: true,
+              wallet: true
+            },
             handler: async (response) => {
               try {
                 const verifyRes = await axiosInstance.post("/payment/verify", {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature
+                  razorpay_signature: response.razorpay_signature,
+                  addressId: selectedAddress
                 });
 
                 if (verifyRes.data.success) {
-                  await placeOrderInDB("Online", "Paid");
+                  toast.success("Order placed successfully!");
+                  navigate("/profile/orders");
                 }
               } catch (verifyError) {
                 toast.error("Payment verification failed.");
@@ -153,9 +171,9 @@ function Checkout() {
   const totalPrice = cart?.items?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
 
   if (!cart) return (
-     <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
-     </div>
+    <div className="min-h-[60vh] flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+    </div>
   );
 
   return (
@@ -166,15 +184,15 @@ function Checkout() {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          
+
           {/* LEFT SECTION - ADDRESSES ONLY */}
           <div className="lg:col-span-7 flex flex-col gap-10">
-            
+
             <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold tracking-tight text-gray-900">Delivery Address</h2>
                 {!showAddressForm && (
-                  <button 
+                  <button
                     onClick={() => setShowAddressForm(true)}
                     className="text-black underline underline-offset-4 text-sm font-semibold hover:text-gray-600 transition"
                   >
@@ -186,18 +204,17 @@ function Checkout() {
               {!showAddressForm ? (
                 <div className="grid grid-cols-1 gap-4">
                   {addresses.map((address) => (
-                    <label 
+                    <label
                       key={address._id}
-                      className={`relative flex flex-col p-6 rounded-xl cursor-pointer transition-all border-2 ${
-                        selectedAddress === address._id 
-                        ? 'border-black bg-gray-50' 
+                      className={`relative flex flex-col p-6 rounded-xl cursor-pointer transition-all border-2 ${selectedAddress === address._id
+                        ? 'border-black bg-gray-50'
                         : 'border-gray-100 hover:border-gray-300'
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-3 mb-3">
-                        <input 
-                          type="radio" 
-                          name="deliveryAddress" 
+                        <input
+                          type="radio"
+                          name="deliveryAddress"
                           className="w-4 h-4 text-black focus:ring-black border-gray-300"
                           checked={selectedAddress === address._id}
                           onChange={() => setSelectedAddress(address._id)}
@@ -217,47 +234,47 @@ function Checkout() {
                 <form onSubmit={submitAddress} className="space-y-6 mt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="flex flex-col">
-                        <label className="text-xs font-semibold text-gray-500 uppercase mb-2">Area / Street</label>
-                        <input 
+                      <label className="text-xs font-semibold text-gray-500 uppercase mb-2">Area / Street</label>
+                      <input
                         type="text" name="area" required
                         value={formData.area} onChange={handleInputChange}
                         className="border border-gray-300 bg-gray-50 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
-                        />
+                      />
                     </div>
                     <div className="flex flex-col">
-                        <label className="text-xs font-semibold text-gray-500 uppercase mb-2">City</label>
-                        <input 
+                      <label className="text-xs font-semibold text-gray-500 uppercase mb-2">City</label>
+                      <input
                         type="text" name="city" required
                         value={formData.city} onChange={handleInputChange}
                         className="border border-gray-300 bg-gray-50 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
-                        />
+                      />
                     </div>
                     <div className="flex flex-col">
-                        <label className="text-xs font-semibold text-gray-500 uppercase mb-2">State</label>
-                        <input 
+                      <label className="text-xs font-semibold text-gray-500 uppercase mb-2">State</label>
+                      <input
                         type="text" name="state" required
                         value={formData.state} onChange={handleInputChange}
                         className="border border-gray-300 bg-gray-50 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
-                        />
+                      />
                     </div>
                     <div className="flex flex-col">
-                        <label className="text-xs font-semibold text-gray-500 uppercase mb-2">Pincode</label>
-                        <input 
+                      <label className="text-xs font-semibold text-gray-500 uppercase mb-2">Pincode</label>
+                      <input
                         type="text" name="pincode" required
                         value={formData.pincode} onChange={handleInputChange}
                         className="border border-gray-300 bg-gray-50 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
-                        />
+                      />
                     </div>
                     <div className="flex flex-col md:col-span-2">
-                        <label className="text-xs font-semibold text-gray-500 uppercase mb-2">Mobile Number</label>
-                        <input 
+                      <label className="text-xs font-semibold text-gray-500 uppercase mb-2">Mobile Number</label>
+                      <input
                         type="text" name="mobile" required
                         value={formData.mobile} onChange={handleInputChange}
                         className="border border-gray-300 bg-gray-50 rounded-xl px-4 py-3 text-sm focus:bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition-all"
-                        />
+                      />
                     </div>
                   </div>
-                  
+
                   <div className="flex gap-4 pt-4 border-t border-gray-100">
                     <button type="submit" className="bg-primary text-white px-8 py-3 rounded-full text-sm font-semibold tracking-wide uppercase hover:bg-primary/90 transition">
                       Save Address
@@ -275,30 +292,28 @@ function Checkout() {
 
           {/* RIGHT SECTION - PAYMENT & SUMMARY */}
           <div className="lg:col-span-5 flex flex-col gap-6">
-            
+
             {/* PAYMENT SECTION */}
             <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
               <h2 className="text-xl font-bold tracking-tight text-gray-900 mb-6">Choose Payment Method</h2>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <label className={`flex items-center gap-4 px-2 border-2 rounded-xl cursor-pointer transition-all ${
-                  paymentGateway === 'razorpay' ? 'border-black bg-gray-50' : 'border-gray-100 hover:border-gray-200'
-                }`}>
-                  <input 
-                    type="radio" name="paymentGateway" 
-                    checked={paymentGateway === 'razorpay'} 
+                <label className={`flex items-center gap-4 px-2 border-2 rounded-xl cursor-pointer transition-all ${paymentGateway === 'razorpay' ? 'border-black bg-gray-50' : 'border-gray-100 hover:border-gray-200'
+                  }`}>
+                  <input
+                    type="radio" name="paymentGateway"
+                    checked={paymentGateway === 'razorpay'}
                     onChange={() => setPaymentGateway('razorpay')}
                     className="w-4 h-4 text-black focus:ring-black"
                   />
                   <img src={assets.razorpay_img} alt="Razorpay" className="w-32 object-contain" />
                 </label>
 
-                <label className={`flex items-center gap-4 p-5 border-2 rounded-xl cursor-pointer transition-all ${
-                  paymentGateway === 'cod' ? 'border-black bg-gray-50' : 'border-gray-100 hover:border-gray-200'
-                }`}>
-                  <input 
-                    type="radio" name="paymentGateway" 
-                    checked={paymentGateway === 'cod'} 
+                <label className={`flex items-center gap-4 p-5 border-2 rounded-xl cursor-pointer transition-all ${paymentGateway === 'cod' ? 'border-black bg-gray-50' : 'border-gray-100 hover:border-gray-200'
+                  }`}>
+                  <input
+                    type="radio" name="paymentGateway"
+                    checked={paymentGateway === 'cod'}
                     onChange={() => setPaymentGateway('cod')}
                     className="w-4 h-4 text-black focus:ring-black"
                   />
@@ -310,7 +325,7 @@ function Checkout() {
             {/* ORDER SUMMARY */}
             <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
               <h3 className="text-lg font-bold tracking-tight text-black  mb-6">Order Summary</h3>
-              
+
               <div className="space-y-4 mb-6 text-sm">
                 <div className="flex justify-between items-center text-gray-600">
                   <span>Subtotal</span>
@@ -333,7 +348,7 @@ function Checkout() {
                 <span>₹{totalPrice}</span>
               </div>
 
-              <button 
+              <button
                 onClick={handleCheckout}
                 className="w-full bg-primary hover:bg-primary/90 text-white py-4 rounded-full text-sm font-bold tracking-widest uppercase shadow-sm transition-all"
               >

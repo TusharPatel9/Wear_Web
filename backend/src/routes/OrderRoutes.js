@@ -11,11 +11,12 @@ const {
   getUserOrders,
   getSellerOrders,
   updateOrderStatus,
-  getOrderById
+  getOrderById,
+  placeOrderCOD
 } = require("../controllers/OrderController");
 
 // ORDER
-orderRoutes.post("/place", validateToken, isCustomer, placeOrder);
+orderRoutes.post("/place-cod", validateToken, isCustomer, placeOrderCOD);
 orderRoutes.get("/my-orders", validateToken, isCustomer, getUserOrders);
 orderRoutes.get("/seller-orders", validateToken, isSeller, getSellerOrders);
 orderRoutes.put("/status", validateToken, isSeller, updateOrderStatus);

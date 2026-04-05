@@ -101,9 +101,8 @@ function UserNavbar() {
     <>
       {/* NAVBAR */}
       <nav
-        className={`fixed top-0 left-0 w-full z-50 h-16 flex items-center justify-between px-6 md:px-16 transition-all duration-300 ${
-          scrolled ? "bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-100" : "bg-white"
-        }`}
+        className={`fixed top-0 left-0 w-full z-50 h-16 flex items-center justify-between px-6 md:px-16 transition-all duration-300 ${scrolled ? "bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-100" : "bg-white"
+          }`}
       >
         {/* LEFT */}
         <div className="flex items-center gap-12">
@@ -127,7 +126,7 @@ function UserNavbar() {
                 <div className="absolute left-0 top-full mt-0 w-max min-w-[500px] bg-white shadow-xl p-8 hidden group-hover:flex gap-12 z-[999] border border-gray-100 rounded-b-2xl transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0">
                   {[...(mainCat.children || [])]
                     .sort((a, b) => {
-                      const order = ["Top-Wear", "Bottom-Wear", "Foot-Wear"];
+                      const order = ["Top Wear", "Bottom Wear", "Foot Wear"];
                       return order.indexOf(a.name) - order.indexOf(b.name);
                     })
                     .map((subCat) => (

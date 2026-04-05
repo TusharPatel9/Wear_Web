@@ -2,10 +2,12 @@ const Order = require("../models/OrderModel");
 const Cart = require("../models/CartModel");
 const Product = require("../models/ProductModel");
 
-exports.placeOrder = async (req, res) => {
+
+
+exports.placeOrderCOD = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { addressId, paymentMethod = "COD", paymentStatus = "Unpaid" } = req.body;
+    const { addressId } = req.body;
 
     const cart = await Cart.findOne({ userId });
 
@@ -16,35 +18,28 @@ exports.placeOrder = async (req, res) => {
       });
     }
 
-    // Group items by seller
-    const sellerMap = {}; // { sellerId: { items: [], totalAmount: 0 } }
+    const productIds = cart.items.map(item => item.productId);
+    const products = await Product.find({ _id: { $in: productIds } });
+
+    const productMap = {};
+    products.forEach(p => {
+      productMap[p._id.toString()] = p;
+    });
+
+    const sellerMap = {};
 
     for (const item of cart.items) {
-      const product = await Product.findById(item.productId);
+      const product = productMap[item.productId.toString()];
+      const sellerId = product.sellerId.toString();
 
-      if (!product) throw new Error("Product not found");
-
-      const sellerId = product.sellerId.toString(); //18 char
-
-      // create seller bucket if not exist
       if (!sellerMap[sellerId]) {
-        sellerMap[sellerId] = {
-          items: [],
-          totalAmount: 0,
-        };
+        sellerMap[sellerId] = { items: [], totalAmount: 0 };
       }
 
-      // push item
-      sellerMap[sellerId].items.push({
-        productId: item.productId,
-        quantity: item.quantity,
-        price: item.price,
-      });
-
+      sellerMap[sellerId].items.push(item);
       sellerMap[sellerId].totalAmount += item.price * item.quantity;
     }
 
-    // 📦 Create orders for each seller
     const orders = [];
 
     for (const sellerId in sellerMap) {
@@ -54,21 +49,21 @@ exports.placeOrder = async (req, res) => {
         addressId,
         items: sellerMap[sellerId].items,
         totalAmount: sellerMap[sellerId].totalAmount,
-        paymentMethod,
-        paymentStatus,
+        paymentMethod: "COD",
+        paymentStatus: "Unpaid",
       });
 
       orders.push(order);
     }
 
-    // 🧹 Clear cart
     await Cart.findOneAndDelete({ userId });
 
     res.status(201).json({
       success: true,
-      message: "Orders placed successfully",
+      message: "COD Order placed",
       orders,
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,

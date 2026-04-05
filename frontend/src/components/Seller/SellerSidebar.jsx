@@ -10,6 +10,7 @@ import {
   MdPerson,
   MdLogout,
 } from "react-icons/md";
+import { toast } from "react-toastify";
 
 function SellerSidebar() {
   const navigate = useNavigate();
@@ -67,6 +68,7 @@ function SellerSidebar() {
             localStorage.removeItem("token");
             localStorage.removeItem("role");
             navigate("/login");
+            toast.success("Logout successfully");
           }}
           className="flex items-center gap-4 px-6 py-4 text-[15px] font-semibold border-l-4 border-transparent text-gray-600 hover:text-secondary hover:bg-gray-50 transition-all w-full text-left"
         >

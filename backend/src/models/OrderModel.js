@@ -47,7 +47,7 @@ const orderSchema = new mongoose.Schema({
 
     orderStatus: {
         type: String,
-        enum: ["Placed" ,"Pending",  "Shipped", "Delivered", "Cancelled"],
+        enum: ["Placed", "Pending", "Shipped", "Delivered", "Cancelled"],
         default: "Placed"
     },
 
@@ -70,7 +70,10 @@ const orderSchema = new mongoose.Schema({
 
     deliveryDate: {
         type: Date
-    }
+    },
+    razorpay_order_id: String,
+    razorpay_payment_id: String,
+    razorpay_signature: String,
 
 }, {
     timestamps: true

@@ -116,7 +116,7 @@ export default function SellerProfile() {
                     <button
                         className="w-24 h-24 bg-primary text-4xl rounded-full text-white border"
                     >
-                        {userData?.name.charAt(0)}
+                        {userData?.name.charAt(0).toUpperCase()}
                     </button>
 
                     <div className="flex-1">
