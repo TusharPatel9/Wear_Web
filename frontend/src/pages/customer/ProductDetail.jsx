@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../AxiosInstance";
-import { IoIosStar } from "react-icons/io";
-import { FaCheckCircle, FaTruck } from "react-icons/fa";
-import { MdPayment, MdOutlineLocalOffer } from "react-icons/md";
+import { IoIosStar, IoIosStarOutline, IoMdStarHalf } from "react-icons/io";
+import { FaCheckCircle, FaTruck, FaStar, FaRegStar, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { MdPayment, MdOutlineLocalOffer, MdCameraAlt, MdExpandMore } from "react-icons/md";
 import { toast } from "react-toastify";
 
 function ProductDetail() {
@@ -14,6 +14,10 @@ function ProductDetail() {
   const [token, setToken] = useState();
   const [error, setError] = useState("");
   const [qty, setQty] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState(false);
+  const scrollRef = React.useRef(null);
   const navigate = useNavigate();
 
   const handleQty = (type) => {
@@ -59,6 +63,7 @@ function ProductDetail() {
 
   useEffect(() => {
     getProductDetailById();
+    fetchReviews();
     const storedToken = localStorage.getItem("token");
 
     if (storedToken) {
@@ -66,7 +71,28 @@ function ProductDetail() {
     } else {
       setToken(null);
     }
-  }, []);
+  }, [productId]);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await axiosInstance.get(`/review/product-reviews/${productId}`);
+      setReviews(response.data.data);
+    } catch (error) {
+      console.log("Error fetching reviews", error);
+    }
+  };
+
+  const averageRating = reviews.length > 0 
+    ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1)
+    : 0;
+  
+  const scroll = (direction) => {
+    if (scrollRef.current) {
+        const { scrollLeft, clientWidth } = scrollRef.current;
+        const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+        scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
   
   useEffect(() => {
     if (product?.imagePaths?.length > 0) {
@@ -211,6 +237,177 @@ function ProductDetail() {
 
         </div>
       </div>
+
+    {/* REVIEWS SECTION */}
+    <div className="max-w-7xl mx-auto px-6 py-16 border-t border-gray-100 mt-16">
+      <div className="flex flex-col lg:flex-row gap-16">
+        
+        {/* Left - Review Summary */}
+        <div className="lg:w-1/3">
+          <div className="sticky top-24">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 uppercase tracking-wider">Ratings & Reviews</h2>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex flex-col items-center justify-center bg-green-600 text-white px-4 py-2 rounded-lg">
+                <div className="flex items-center gap-1">
+                  <span className="text-3xl font-bold">{averageRating}</span>
+                  <FaStar className="text-xl" />
+                </div>
+              </div>
+              <div>
+                <p className="text-sm font-bold text-gray-900">{reviews.length} Ratings &</p>
+                <p className="text-sm font-bold text-gray-900">{reviews.length} Reviews</p>
+              </div>
+            </div>
+            
+            {/* Rating Breakdown */}
+            <div className="space-y-3 mt-8">
+              {[5, 4, 3, 2, 1].map((star) => {
+                const count = reviews.filter(r => r.rating === star).length;
+                const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                return (
+                  <div key={star} className="flex items-center gap-3">
+                    <span className="text-xs font-semibold w-8 flex items-center gap-1">{star} <FaStar className="text-[10px]" /></span>
+                    <div className="flex-grow h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-500 ${star >= 4 ? 'bg-green-600' : star >= 3 ? 'bg-yellow-500' : 'bg-red-500'}`} 
+                        style={{ width: `${percentage}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-[11px] text-gray-400 w-8">{count}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Right - Reviews List / Slider */}
+        <div className="lg:w-2/3 relative group">
+          {reviews.length > 0 ? (
+            <>
+              {/* SLIDER VIEW */}
+              {!showAllReviews ? (
+                <div className="relative">
+                   {/* Scroll Buttons */}
+                   {reviews.length > 2 && (
+                    <div className="absolute top-1/2 -translate-y-1/2 -left-4 -right-4 flex justify-between pointer-events-none z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button 
+                        onClick={() => scroll('left')}
+                        className="w-10 h-10 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-800 hover:bg-gray-50 transition-all pointer-events-auto border border-gray-100"
+                      >
+                        <FaChevronLeft />
+                      </button>
+                      <button 
+                         onClick={() => scroll('right')}
+                         className="w-10 h-10 bg-white shadow-xl rounded-full flex items-center justify-center text-gray-800 hover:bg-gray-50 transition-all pointer-events-auto border border-gray-100"
+                      >
+                        <FaChevronRight />
+                      </button>
+                    </div>
+                   )}
+
+                  <div 
+                    ref={scrollRef}
+                    className="flex gap-4 overflow-x-hidden snap-x snap-mandatory scroll-smooth p-2 no-scrollbar"
+                  >
+                    {reviews.map((review, i) => (
+                      <div 
+                        key={i} 
+                        className="min-w-full md:min-w-[calc(50%-8px)] snap-start bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300"
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-bold text-white ${review.rating >= 4 ? 'bg-green-600' : review.rating >= 3 ? 'bg-yellow-500' : 'bg-red-500'}`}>
+                            {review.rating} <FaStar className="text-[8px]" />
+                          </div>
+                          <span className="font-bold text-gray-900 text-sm truncate">{review.userId?.name}</span>
+                          <span className="ml-auto text-[10px] text-gray-400">
+                             {new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </span>
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+                          {review.comment}
+                        </p>
+
+                        <div className="flex items-center gap-1.5 text-gray-400 text-[10px] font-bold uppercase tracking-wider">
+                           <FaCheckCircle className="text-green-600" /> Certified Buyer
+                        </div>
+                        
+                        {review.images?.length > 0 && (
+                          <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar">
+                            {review.images.slice(0, 3).map((img, idx) => (
+                              <img key={idx} src={img} alt="review" className="w-12 h-16 object-cover rounded border border-gray-100" />
+                            ))}
+                            {review.images.length > 3 && (
+                               <div className="w-12 h-16 bg-gray-100 flex items-center justify-center rounded text-[10px] font-bold text-gray-500">+{review.images.length - 3}</div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 flex justify-center">
+                    <button 
+                      onClick={() => navigate(`/product-reviews/${productId}`)}
+                      className="group flex items-center gap-2 text-primary font-bold text-sm tracking-widest uppercase hover:underline"
+                    >
+                      Show All Reviews ({reviews.length})
+                      <FaChevronRight className="text-xs group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* FULL LIST VIEW (Legacy, we keep it as a fallback but we prefer navigation) */
+                <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                   <div className="flex items-center justify-between mb-8 pb-4 border-b border-gray-100">
+                      <h3 className="font-bold text-gray-900 uppercase tracking-widest text-sm">All Customer Reviews</h3>
+                      <button 
+                        onClick={() => setShowAllReviews(false)}
+                        className="text-primary font-bold text-xs uppercase tracking-widest hover:underline"
+                      >
+                        Show Slider
+                      </button>
+                   </div>
+                   {reviews.map((review, i) => (
+                    <div key={i} className="pb-12 border-b border-gray-100 last:border-0">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className={`flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold text-white ${review.rating >= 4 ? 'bg-green-600' : review.rating >= 3 ? 'bg-yellow-500' : 'bg-red-500'}`}>
+                            {review.rating} <FaStar className="text-[10px]" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-900 text-sm uppercase tracking-tight">{review.userId?.name}</h4>
+                            <span className="text-[10px] text-gray-400 font-medium">
+                              {new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-green-600 bg-green-50 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">
+                          <FaCheckCircle /> Verified Buyer
+                        </div>
+                      </div>
+                      <p className="text-gray-600 text-sm leading-relaxed mb-6 italic">"{review.comment}"</p>
+                      {review.images?.length > 0 && (
+                        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+                          {review.images.map((img, idx) => (
+                            <img key={idx} src={img} alt="review" className="w-24 h-32 object-cover rounded shadow-sm hover:scale-105 transition-transform" />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-gray-100 rounded-2xl bg-gray-50/30">
+              <p className="text-gray-400 font-medium italic">No reviews yet. Be the first to share your thoughts!</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
     </div>
   );
 }

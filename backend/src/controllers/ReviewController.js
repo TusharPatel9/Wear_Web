@@ -1,16 +1,31 @@
 const Review = require("../models/ReviewModel");
+const Order = require("../models/OrderModel");
 const uploadToCloudinary = require("../utils/Cloudinary");
 
 // ADD REVIEW WITH IMAGES
 exports.addReview = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { productId, rating, comment } = req.body;
+    const { productId, rating, comment, title } = req.body;
 
     if (!productId || !rating || !comment) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
+      });
+    }
+
+    // ✅ Verify the user has purchased and received the product
+    const order = await Order.findOne({
+      userId,
+      "items.productId": productId,
+      orderStatus: "Delivered",
+    });
+
+    if (!order) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only review products you have purchased and received.",
       });
     }
 
@@ -29,6 +44,7 @@ exports.addReview = async (req, res) => {
       userId,
       rating,
       comment,
+      title: title || "Verified Review",
       images: imageUrls,
     });
 
@@ -72,6 +88,50 @@ exports.getProductReviews = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error fetching reviews",
+      error: error.message,
+    });
+  }
+};
+
+// 3. CHECK REVIEW ELIGIBILITY
+exports.checkReviewEligibility = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { productId } = req.params;
+
+    // Check if user has already reviewed
+    const existingReview = await Review.findOne({ userId, productId });
+    if (existingReview) {
+      return res.status(200).json({
+        success: true,
+        canReview: false,
+        message: "You have already reviewed this product",
+      });
+    }
+
+    // Check if user has purchased the product
+    const order = await Order.findOne({
+      userId,
+      "items.productId": productId,
+      orderStatus: "Delivered",
+    });
+
+    if (!order) {
+      return res.status(200).json({
+        success: true,
+        canReview: false,
+        message: "You can only review products you have purchased and received",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      canReview: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error checking review eligibility",
       error: error.message,
     });
   }
@@ -128,5 +188,41 @@ exports.deleteReview = async (req, res) => {
       message: "Error deleting review",
       error: error.message,
     });
+  }
+};
+
+exports.voteReviewHelpfulness = async (req, res) => {
+  try {
+    const { reviewId } = req.params;
+    const { voteType } = req.body; // 'helpful' or 'unhelpful'
+    const userId = req.user._id;
+
+    const review = await mongoose.model("Review").findById(reviewId);
+    if (!review) {
+      return res.status(404).json({ success: false, message: "Review not found" });
+    }
+
+    // Initialize arrays if they don't exist
+    if (!review.helpfulUsers) review.helpfulUsers = [];
+    if (!review.unhelpfulUsers) review.unhelpfulUsers = [];
+
+    // Remove from both first to toggle/change vote
+    review.helpfulUsers = review.helpfulUsers.filter(id => id.toString() !== userId.toString());
+    review.unhelpfulUsers = review.unhelpfulUsers.filter(id => id.toString() !== userId.toString());
+
+    if (voteType === 'helpful') {
+      review.helpfulUsers.push(userId);
+    } else if (voteType === 'unhelpful') {
+      review.unhelpfulUsers.push(userId);
+    }
+
+    await review.save();
+    res.status(200).json({ 
+      success: true, 
+      helpfulCount: review.helpfulUsers.length,
+      unhelpfulCount: review.unhelpfulUsers.length 
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

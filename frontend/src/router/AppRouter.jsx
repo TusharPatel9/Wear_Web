@@ -31,6 +31,7 @@ import Profile from "../pages/customer/Profile";
 import Orders from "../pages/customer/Orders";
 import Address from "../pages/customer/Address";
 import OrderDetails from "../pages/customer/OrderDetails";
+import AllReviews from "../pages/customer/AllReviews";
 import SellerDashboard from "../pages/seller/SellerDashboard";
 import Payment from "../pages/seller/Payment";
 
@@ -55,6 +56,7 @@ const router = createBrowserRouter([
       { path: "cart", element: <Cart /> },
       { path: "checkout", element: <Checkout /> },
       { path: "productdetail/:productId", element: <ProductDetail /> },
+      { path: "product-reviews/:productId", element: <AllReviews /> },
       { path: "products/category/:categoryId", element: <CategoryProducts /> },
       { path: "/search", element: <SearchPage /> },
     ],

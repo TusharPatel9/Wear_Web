@@ -24,10 +24,26 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    title: {
+      type: String,
+      default: "Verified Review",
+    },
     images: {
       type: [String],
       default: [],
     },
+    helpfulUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    unhelpfulUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     //images:array
   },
   {
