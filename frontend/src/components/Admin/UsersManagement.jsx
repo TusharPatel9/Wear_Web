@@ -4,7 +4,7 @@ import Table from "../UI/Table";
 import Button from "../UI/Button";
 import ConfirmDialog from "../UI/ConfirmDialog";
 import Modal from "../UI/Modal";
-import { MdBlock, MdDelete, MdCheckCircle } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 
 function UsersManagement() {
   const [users, setUsers] = useState([]);
@@ -29,24 +29,17 @@ function UsersManagement() {
   };
 
   const handleActionClick = async (user, action) => {
-    const isBlock = action === "block";
-    const msg = isBlock 
-      ? `Are you sure you want to ${user.status === 'blocked' ? 'unblock' : 'block'} ${user.name}?`
-      : `Are you sure you want to permanently delete ${user.name}?`;
+    const msg = `Are you sure you want to permanently delete user ${user.name}?`;
       
     if (!window.confirm(msg)) return;
 
     try {
-      if (isBlock) {
-        await axiosInstance.put(`/admin/users/block/${user._id}`);
-      } else {
-        await axiosInstance.delete(`/admin/users/${user._id}`);
-      }
+      await axiosInstance.delete(`/admin/users/${user._id}`);
       fetchUsers();
-      alert(`User ${isBlock ? "status updated" : "deleted"} successfully`);
+      alert(`User deleted successfully`);
     } catch (error) {
       console.error("Action failed", error);
-      alert(`Action failed: ${error.response?.data?.message || error.message}`);
+      alert(`Action failed: ${error.response?.data?.message || "Something went wrong"}`);
     }
   };
 
@@ -62,23 +55,14 @@ function UsersManagement() {
     },
     { header: "Status", accessor: "status",
       render: (row) => (
-        <span className={`capitalize px-2 py-1 rounded-lg text-xs font-medium ${
-          row.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-        }`}>
-          {row.status}
+        <span className="capitalize px-2 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700">
+          Active
         </span>
       ) 
     },
     { header: "Actions", 
       render: (row) => (
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => handleActionClick(row, "block")}
-          >
-            {row.status === "blocked" ? <MdCheckCircle className="text-green-500" /> : <MdBlock className="text-orange-500" />}
-          </Button>
           <Button 
             variant="outline" 
             size="sm" 

@@ -17,14 +17,12 @@ router.use(authMiddleware.validateToken, authMiddleware.isAdmin);
 
 // User Management Routes
 router.route("/users").get(adminController.getAllUsers);
-router.route("/users/block/:id").put(adminController.blockUser);
 router.route("/users/:id").delete(adminController.deleteUser);
 
 // Seller Management Routes
 router.route("/sellers").get(adminController.getAllSellers);
 router.route("/sellers/approve/:id").put(adminController.approveSeller);
 router.route("/sellers/reject/:id").put(adminController.rejectSeller);
-router.route("/sellers/suspend/:id").put(adminController.suspendSeller);
 
 // Dashboard Stats Route
 router.route("/dashboard-stats").get(adminController.getDashboardStats);

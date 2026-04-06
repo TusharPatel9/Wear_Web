@@ -23,9 +23,10 @@ const sellerSchema = new mongoose.Schema(
       required: true,
     },
 
-    isVerified: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
 
     bankDetails: {

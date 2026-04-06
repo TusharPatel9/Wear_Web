@@ -12,20 +12,6 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-exports.blockUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-    // Toggle block status
-    user.status = user.status === "blocked" ? "active" : "blocked";
-    await user.save();
-
-    res.status(200).json({ success: true, message: `User status changed to ${user.status}`, data: user });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Error updating user status", error: error.message });
-  }
-};
 
 exports.deleteUser = async (req, res) => {
   try {
@@ -62,10 +48,9 @@ exports.approveSeller = async (req, res) => {
     if (!seller) return res.status(404).json({ success: false, message: "Seller not found" });
 
     seller.status = "approved";
-    seller.isVerified = true;
     await seller.save();
 
-    res.status(200).json({ success: true, message: "Seller approved", data: seller });
+    res.status(200).json({ success: true, message: "Seller account approved successfully", data: seller });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error approving seller", error: error.message });
   }
@@ -77,28 +62,15 @@ exports.rejectSeller = async (req, res) => {
     if (!seller) return res.status(404).json({ success: false, message: "Seller not found" });
 
     seller.status = "rejected";
-    seller.isVerified = false;
     await seller.save();
 
-    res.status(200).json({ success: true, message: "Seller rejected", data: seller });
+    res.status(200).json({ success: true, message: "Seller account rejected", data: seller });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error rejecting seller", error: error.message });
   }
 };
 
-exports.suspendSeller = async (req, res) => {
-  try {
-    const seller = await Seller.findById(req.params.id);
-    if (!seller) return res.status(404).json({ success: false, message: "Seller not found" });
 
-    seller.status = seller.status === "suspended" ? "approved" : "suspended";
-    await seller.save();
-
-    res.status(200).json({ success: true, message: `Seller status changed to ${seller.status}`, data: seller });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Error suspending seller", error: error.message });
-  }
-};
 
 // ========================
 // DASHBOARD STATS
@@ -110,9 +82,33 @@ exports.getDashboardStats = async (req, res) => {
     const totalSellers = await User.countDocuments({ role: "seller" });
     const totalOrders = await Order.countDocuments();
     
-    // Calculate total revenue from orders that aren't cancelled
-    const orders = await Order.find({ orderStatus: { $ne: "Cancelled" } });
-    const totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+    // Calculate total revenue from non-cancelled orders
+    const allOrders = await Order.find({ orderStatus: { $ne: "Cancelled" } });
+    const totalRevenue = allOrders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+
+    // Get stats for the last 7 days
+    const last7Days = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      date.setHours(0, 0, 0, 0);
+      
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+
+      const dayOrders = await Order.find({
+        createdAt: { $gte: date, $lt: nextDate },
+        orderStatus: { $ne: "Cancelled" }
+      });
+
+      const dayRevenue = dayOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+      
+      last7Days.push({
+        date: date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+        revenue: dayRevenue,
+        orders: dayOrders.length
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -120,7 +116,12 @@ exports.getDashboardStats = async (req, res) => {
         totalUsers,
         totalSellers,
         totalOrders,
-        totalRevenue
+        totalRevenue,
+        salesTrend: last7Days,
+        userDistribution: [
+          { name: "Customers", value: totalUsers },
+          { name: "Sellers", value: totalSellers }
+        ]
       }
     });
   } catch (error) {

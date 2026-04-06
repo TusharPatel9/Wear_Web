@@ -10,7 +10,7 @@ export default function OrderDetails() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reviewingProductId, setReviewingProductId] = useState(null);
-  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewRating, setReviewRating] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewImages, setReviewImages] = useState([]);
@@ -219,7 +219,7 @@ export default function OrderDetails() {
                     onChange={(e) => setReviewComment(e.target.value)}
                     placeholder="Share your experience with this product..."
                     className="w-full border border-gray-200 p-3 text-sm focus:border-black outline-none transition-colors min-h-[80px] bg-white rounded"
-                    required
+                    
                   ></textarea>
 
                   <div className="flex items-center gap-3">

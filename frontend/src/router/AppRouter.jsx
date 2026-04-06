@@ -14,6 +14,7 @@ import AdminDashboard from "../components/Admin/AdminDashboard";
 import UsersManagement from "../components/Admin/UsersManagement";
 import SellersManagement from "../components/Admin/SellersManagement";
 import CategoryManagement from "../components/Admin/CategoryManagement";
+import AdminProfile from "../components/Admin/AdminProfile";
 import CustomerProfileLayout from "../components/Customer/CustomerProfileLayout";
 import Order from "../components/Seller/Order";
 import ProtectedRoutes from "../components/ProtectedRoutes";
@@ -99,6 +100,7 @@ const router = createBrowserRouter([
       { path: "users", element: <UsersManagement /> },
       { path: "sellers", element: <SellersManagement /> },
       { path: "categories", element: <CategoryManagement /> },
+      { path: "profile", element: <AdminProfile /> },
     ],
   },
 ]);

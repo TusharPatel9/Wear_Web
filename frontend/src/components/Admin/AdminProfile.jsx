@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "../../AxiosInstance";
-import Button from "../../components/UI/Button";
+import Button from "../UI/Button";
 
-export default function Profile() {
+export default function AdminProfile() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   
@@ -11,7 +11,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({ name: "", email: "", mobile: "" });
   const [isSaving, setIsSaving] = useState(false);
 
-  const getCustomerDetail = async () => {
+  const getAdminDetail = async () => {
     try {
       setLoading(true);
       const res = await axiosInstance.get("/user/profile");
@@ -31,7 +31,7 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    getCustomerDetail();
+    getAdminDetail();
   }, []);
 
   const handleEditToggle = async () => {
@@ -43,7 +43,7 @@ export default function Profile() {
         setIsSaving(true);
         const res = await axiosInstance.put("/user/profile", formData);
         if (res.data.success) {
-          toast.success("Profile updated perfectly!");
+          toast.success("Profile updated successfully!");
           setUserData(res.data.userObj);
           setIsEditing(false);
         }
@@ -68,26 +68,24 @@ export default function Profile() {
   }
 
   return (
-    <div className="p-4 md:p-8 w-full">
+    <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="mb-8">
-        <h2 className="text-3xl font-extrabold text-gray-900">Your Profile</h2>
+        <h2 className="text-3xl font-extrabold text-gray-900">Admin Account</h2>
         <p className="text-gray-600">
-          Manage your account information and preferences.
+          Manage your personal information and login details.
         </p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden max-w-4xl">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         {/* Profile Card Header */}
-        <div className="bg-gradient-to-r from-gray-50 to-indigo-50 px-8 py-10 border-b border-gray-100 flex items-center gap-6">
-          <div className="h-20 w-20 rounded-full bg-primary text-white flex items-center justify-center text-3xl font-bold">
-            {userData?.name?.charAt(0).toUpperCase() || 'U'}
+        <div className="bg-indigo-50 px-8 py-10 border-b border-gray-100 flex items-center gap-6">
+          <div className="h-20 w-20 rounded-full bg-indigo-600 text-white flex items-center justify-center text-3xl font-bold">
+            {userData?.name?.charAt(0).toUpperCase() || 'A'}
           </div>
           <div>
-            <h3 className="text-2xl font-bold text-gray-900">{userData?.name || "User Name"}</h3>
-            <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase bg-white/60 text-indigo-700 mt-1 border border-indigo-100">
-              Customer Account
-            </div>
+            <h3 className="text-2xl font-bold text-gray-900">{userData?.name || "Admin User"}</h3>
+            <p className="text-indigo-600 font-medium">System Administrator</p>
           </div>
         </div>
 
@@ -99,41 +97,37 @@ export default function Profile() {
               <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                 Full Name
               </label>
-              <div className="relative">
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white"
-                    placeholder="Enter full name"
-                  />
-                ) : (
-                  <p className="text-lg text-gray-800 font-medium py-2">{userData?.name || "—"}</p>
-                )}
-              </div>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  placeholder="Enter full name"
+                />
+              ) : (
+                <p className="text-lg text-gray-800 font-medium">{userData?.name || "—"}</p>
+              )}
             </div>
 
             {/* Email ID */}
             <div>
               <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                Email Address
+                Email ID
               </label>
-              <div className="relative">
-                {isEditing ? (
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    disabled // Lock email for security
-                    className="w-full border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-4 py-2.5 cursor-not-allowed outline-none"
-                    placeholder="Enter email address"
-                  />
-                ) : (
-                  <p className="text-lg text-gray-800 font-medium py-2">{userData?.email || "—"}</p>
-                )}
-              </div>
+              {isEditing ? (
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  disabled // Email usually shouldn't be changed easily for admins
+                  className="w-full border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-4 py-2.5 cursor-not-allowed outline-none"
+                  placeholder="Enter email address"
+                />
+              ) : (
+                <p className="text-lg text-gray-800 font-medium">{userData?.email || "—"}</p>
+              )}
             </div>
 
             {/* Mobile Number */}
@@ -141,30 +135,27 @@ export default function Profile() {
               <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
                 Mobile Number
               </label>
-              <div className="relative">
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name="mobile"
-                    value={formData.mobile}
-                    onChange={handleInputChange}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-white"
-                    placeholder="Enter mobile number"
-                  />
-                ) : (
-                  <p className="text-lg text-gray-800 font-medium py-2">{userData?.mobile || "- not added -"}</p>
-                )}
-              </div>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="mobile"
+                  value={formData.mobile}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  placeholder="Enter mobile number"
+                />
+              ) : (
+                <p className="text-lg text-gray-800 font-medium">{userData?.mobile || "- not added -"}</p>
+              )}
             </div>
             
-            {/* Account Status - Static Info */}
+            {/* Role - Read Only */}
             <div>
               <label className="block text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                Account Status
+                User Role
               </label>
-              <div className="flex items-center gap-2 py-2">
-                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
-                <p className="text-lg text-green-600 font-bold uppercase tracking-widest text-sm">Active</p>
+              <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase bg-indigo-100 text-indigo-700">
+                {userData?.role || "admin"}
               </div>
             </div>
           </div>
@@ -194,7 +185,7 @@ export default function Profile() {
               disabled={isSaving}
               className="px-10"
             >
-              {isSaving ? "SAVING..." : isEditing ? "SAVE CHANGES" : "EDIT PROFILE"}
+              {isSaving ? "Saving..." : isEditing ? "Save Changes" : "Edit Profile"}
             </Button>
           </div>
         </div>
@@ -202,4 +193,3 @@ export default function Profile() {
     </div>
   );
 }
-
