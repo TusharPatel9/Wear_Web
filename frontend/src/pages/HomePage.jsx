@@ -5,9 +5,9 @@ import { FaHeart, FaRegHeart, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const heroImages = [
-  "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop", 
-  "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=2070&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1618932260643-eadd6e589ec9?q=80&w=2070&auto=format&fit=crop", 
+  "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1521335629791-ce4aec67dd15?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "https://images.unsplash.com/photo-1729864210127-0c0dc835dd78?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 ];
 
 function HomePage() {
@@ -21,7 +21,7 @@ function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % heroImages.length);
-    }, 4000);
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
 
@@ -97,11 +97,15 @@ function HomePage() {
             Spring / Summer 2026
           </p>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 leading-tight max-w-4xl">
-            ELEVATE YOUR <br className="hidden md:block"/> EVERYDAY STYLE
+            ELEVATE YOUR <br className="hidden md:block" /> EVERYDAY STYLE
           </h1>
           <div className="flex gap-4">
-            <button 
-              onClick={() => document.getElementById("new-arrivals").scrollIntoView({ behavior: 'smooth' })}
+            <button
+              onClick={() =>
+                document
+                  .getElementById("new-arrivals")
+                  .scrollIntoView({ behavior: "smooth" })
+              }
               className="bg-white text-black px-8 py-3.5 rounded-full text-sm font-semibold tracking-wide hover:scale-105 transition-transform"
             >
               SHOP NOW
@@ -125,36 +129,65 @@ function HomePage() {
 
       {/* ================= PRODUCTS CATEGORY PREVIEW (Optional Enhancement) ================= */}
       <section className="py-20 px-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-         <div onClick={() => navigate('/search?query=Women')} className="relative h-[60vh] group overflow-hidden rounded-2xl cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Women" />
-            <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors"></div>
-            <div className="absolute bottom-10 left-10 text-white">
-              <h3 className="text-3xl font-bold mb-2 tracking-tight">WOMEN</h3>
-              <p className="text-sm font-medium underline underline-offset-4 uppercase tracking-widest text-white/90">Discover</p>
-            </div>
-         </div>
-         <div onClick={() => navigate('/search?query=Men')} className="relative h-[60vh] group overflow-hidden rounded-2xl cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover top-1/4 group-hover:scale-105 transition-transform duration-700" alt="Men" />
-            <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors"></div>
-            <div className="absolute bottom-10 left-10 text-white">
-              <h3 className="text-3xl font-bold mb-2 tracking-tight">MEN</h3>
-              <p className="text-sm font-medium underline underline-offset-4 uppercase tracking-widest text-white/90">Discover</p>
-            </div>
-         </div>
-         <div onClick={() => navigate('/search?query=Kids')} className="relative h-[60vh] group overflow-hidden rounded-2xl cursor-pointer">
-            <img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Kids" />
-            <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors"></div>
-            <div className="absolute bottom-10 left-10 text-white">
-              <h3 className="text-3xl font-bold mb-2 tracking-tight">KIDS</h3>
-              <p className="text-sm font-medium underline underline-offset-4 uppercase tracking-widest text-white/90">Discover</p>
-            </div>
-         </div>
+        <div
+          onClick={() => navigate("/search?query=Women")}
+          className="relative h-[60vh] group overflow-hidden rounded-2xl cursor-pointer"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            alt="Women"
+          />
+          <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors"></div>
+          <div className="absolute bottom-10 left-10 text-white">
+            <h3 className="text-3xl font-bold mb-2 tracking-tight">WOMEN</h3>
+            <p className="text-sm font-medium underline underline-offset-4 uppercase tracking-widest text-white/90">
+              Discover
+            </p>
+          </div>
+        </div>
+        <div
+          onClick={() => navigate("/search?query=Men")}
+          className="relative h-[60vh] group overflow-hidden rounded-2xl cursor-pointer"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1000&auto=format&fit=crop"
+            className="w-full h-full object-cover top-1/4 group-hover:scale-105 transition-transform duration-700"
+            alt="Men"
+          />
+          <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors"></div>
+          <div className="absolute bottom-10 left-10 text-white">
+            <h3 className="text-3xl font-bold mb-2 tracking-tight">MEN</h3>
+            <p className="text-sm font-medium underline underline-offset-4 uppercase tracking-widest text-white/90">
+              Discover
+            </p>
+          </div>
+        </div>
+        <div
+          onClick={() => navigate("/search?query=Kids")}
+          className="relative h-[60vh] group overflow-hidden rounded-2xl cursor-pointer"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?q=80&w=1000&auto=format&fit=crop"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            alt="Kids"
+          />
+          <div className="absolute inset-0 bg-primary/20 group-hover:bg-primary/10 transition-colors"></div>
+          <div className="absolute bottom-10 left-10 text-white">
+            <h3 className="text-3xl font-bold mb-2 tracking-tight">KIDS</h3>
+            <p className="text-sm font-medium underline underline-offset-4 uppercase tracking-widest text-white/90">
+              Discover
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* ================= PRODUCTS SECTION ================= */}
       <section id="new-arrivals" className="py-20 px-6 max-w-7xl mx-auto">
         <div className="flex flex-col items-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">NEW ARRIVALS</h2>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+            NEW ARRIVALS
+          </h2>
           <div className="h-1 w-16 bg-primary"></div>
         </div>
 
@@ -196,24 +229,28 @@ function HomePage() {
                 </p>
 
                 <div className="flex items-center justify-center gap-3">
-                  <span className="text-base font-semibold text-gray-900">₹{item.price}</span>
-                  <span className="text-sm text-gray-400 line-through">₹{item.price + 300}</span>
-                  <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">30% OFF</span>
+                  <span className="text-base font-semibold text-gray-900">
+                    ₹{item.price}
+                  </span>
+                  <span className="text-sm text-gray-400 line-through">
+                    ₹{item.price + 300}
+                  </span>
+                  <span className="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">
+                    30% OFF
+                  </span>
                 </div>
               </div>
 
               {/* Add to Cart Overlay Button */}
               <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  className="w-full bg-primary text-white py-3 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors"
-                >
+                <button className="w-full bg-primary text-white py-3 rounded-full text-sm font-medium hover:bg-primary/90 transition-colors">
                   VIEW PRODUCT
                 </button>
               </div>
             </div>
           ))}
         </div>
-        
+
         {/* <div className="mt-16 text-center">
             <button 
               onClick={() => navigate("/search?query=")}
@@ -227,13 +264,16 @@ function HomePage() {
       {/* ================= BRAND HIGHLIGHT ================= */}
       <section className="bg-gray-100 py-24 px-6 mt-10">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6 tracking-tight">CRAFTED FOR YOU.</h2>
+          <h2 className="text-3xl font-bold mb-6 tracking-tight">
+            CRAFTED FOR YOU.
+          </h2>
           <p className="text-gray-600 text-lg leading-relaxed max-w-2xl mx-auto text-center font-light">
-            We merge minimalist design with high-quality fabrics perfectly curated to fit into your lifestyle. Discover pieces that transcend seasons.
+            We merge minimalist design with high-quality fabrics perfectly
+            curated to fit into your lifestyle. Discover pieces that transcend
+            seasons.
           </p>
         </div>
       </section>
-
     </div>
   );
 }
