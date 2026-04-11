@@ -1,7 +1,7 @@
 const Wishlist = require("../models/WishlistModel");
 const mongoose = require("mongoose");
 
-// 1️⃣ Add Product to Wishlist
+// 1 Add Product to Wishlist
 exports.addToWishlist = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -68,7 +68,7 @@ exports.addToWishlist = async (req, res) => {
   }
 };
 
-// 2️⃣ Get User Wishlist
+// 2 Get User Wishlist
 exports.getWishlist = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -93,7 +93,7 @@ exports.getWishlist = async (req, res) => {
   }
 };
 
-// 3️⃣ Remove Product From Wishlist
+// 3 Remove Product From Wishlist
 exports.removeFromWishlist = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -140,7 +140,7 @@ exports.removeFromWishlist = async (req, res) => {
   }
 };
 
-// 4️⃣ Clear Wishlist
+// 4 Clear Wishlist
 exports.clearWishlist = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -170,7 +170,7 @@ exports.clearWishlist = async (req, res) => {
   }
 };
 
-// 5️⃣ Check Product in Wishlist
+// 5 Check Product in Wishlist
 // exports.isInWishlist = async (req, res) => {
 
 //     try {

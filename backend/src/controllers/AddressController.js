@@ -51,7 +51,7 @@ exports.getAddressByUserId = async (req, res) => {
       });
     }
 
-    // 5️⃣ Success response
+    // 5 Success response
     return res.status(200).json({
       success: true,
       message: "User address fetched successfully",
@@ -94,7 +94,7 @@ exports.deleteAddress = async (req, res) => {
       });
     }
 
-    // 5️⃣ Delete address
+    // 5 Delete address
     await Address.findByIdAndDelete(addressId);
 
     return res.status(200).json({

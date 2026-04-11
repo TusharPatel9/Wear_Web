@@ -50,7 +50,7 @@ exports.isCustomer = async (req, res, next) => {
   }
 };
 
-//isSeller
+//isseller
 exports.isSeller = async (req, res, next) => {
   try {
     if (req.user.role !== "seller") {

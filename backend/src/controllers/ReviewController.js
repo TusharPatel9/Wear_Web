@@ -15,7 +15,7 @@ exports.addReview = async (req, res) => {
       });
     }
 
-    // ✅ Verify the user has purchased and received the product
+    //  Verify the user has purchased and received the product
     const order = await Order.findOne({
       userId,
       "items.productId": productId,
@@ -38,7 +38,7 @@ exports.addReview = async (req, res) => {
       }
     }
 
-    // ✅ Create review
+    //  Create review
     const review = await Review.create({
       productId,
       userId,
@@ -175,7 +175,7 @@ exports.deleteReview = async (req, res) => {
       });
     }
 
-    // ✅ Delete review
+    //  Delete review
     await Review.findByIdAndDelete(reviewId);
 
     res.status(200).json({

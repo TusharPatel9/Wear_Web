@@ -160,7 +160,7 @@ exports.updateProduct = async (req, res) => {
   try {
     const productId = req.params.id;
 
-    // ✅ 1. Find existing product
+    //  1. Find existing product
     const product = await Product.findById(productId);
 
     if (!product) {
@@ -172,7 +172,7 @@ exports.updateProduct = async (req, res) => {
 
     let updatedImages = [...product.imagePaths];
 
-    // ✅ 2. REMOVE IMAGES
+    //  2. REMOVE IMAGES
     if (req.body.removeImages) {
       let removeImages = req.body.removeImages;
 
@@ -186,7 +186,7 @@ exports.updateProduct = async (req, res) => {
       );
     }
 
-    // ✅ 3. ADD NEW IMAGES
+    //  3. ADD NEW IMAGES
     if (req.files && req.files.length > 0) {
       for (let file of req.files) {
         const result = await uploadToCloudinary(file.path);
@@ -194,7 +194,7 @@ exports.updateProduct = async (req, res) => {
       }
     }
 
-    // ✅ 4. Prepare update data
+    //  4. Prepare update data
     const updateData = {
       ...req.body,
       imagePaths: updatedImages,
@@ -203,12 +203,12 @@ exports.updateProduct = async (req, res) => {
     // remove unwanted field
     delete updateData.removeImages;
 
-    // ✅ convert colors if needed
+    //  convert colors if needed
     if (updateData.colors && typeof updateData.colors === "string") {
       updateData.colors = updateData.colors.split(",");
     }
 
-    // ✅ 5. Update product
+    // 5. Update product
     const updatedProduct = await Product.findByIdAndUpdate(
       productId,
       updateData,
@@ -318,25 +318,25 @@ exports.getProductsByCategory = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    // 🔥 SORT
+    //  SORT
     let sortOption = {};
     if (sort === "low") sortOption.price = 1;
     if (sort === "high") sortOption.price = -1;
     if (sort === "new") sortOption.createdAt = -1;
 
-    // 🔥 BASE FILTER
+    //  BASE FILTER
     let filter = {
       categoryId,
       price: { $gte: minPrice, $lte: maxPrice },
     };
 
-    // ✅ COLOR FILTER
+    //  COLOR FILTER
     if (colors) {
       const colorArray = colors.split(",");
       filter.colors = { $in: colorArray };
     }
 
-    // ✅🔥 BRAND FILTER (IMPROVED)
+    // BRAND FILTER (IMPROVED)
     if (brands) {
       const brandArray = brands.split(",").map((b) => b.trim());
 
@@ -348,7 +348,7 @@ exports.getProductsByCategory = async (req, res) => {
       };
     }
 
-    // 🔥 FETCH PRODUCTS
+    //  FETCH PRODUCTS
     const products = await Product.find(filter)
       .sort(sortOption)
       .skip(skip)

@@ -88,7 +88,7 @@ const razorpayInstance = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// ✅ CREATE ORDER
+//  CREATE ORDER
 exports.createRazorpayOrder = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -102,7 +102,7 @@ exports.createRazorpayOrder = async (req, res) => {
       });
     }
 
-    // ✅ Calculate total
+    //  Calculate total
     let totalAmount = 0;
     cart.items.forEach(item => {
       totalAmount += item.price * item.quantity;
@@ -129,7 +129,7 @@ exports.createRazorpayOrder = async (req, res) => {
   }
 };
 
-// ✅ VERIFY + PLACE ORDER (SECURE FLOW)
+//  VERIFY + PLACE ORDER (SECURE FLOW)
 exports.verifyPayment = async (req, res) => {
   try {
     const userId = req.user._id;
@@ -141,7 +141,7 @@ exports.verifyPayment = async (req, res) => {
       addressId
     } = req.body;
 
-    // 🔐 Verify signature
+    //  Verify signature
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(razorpay_order_id + "|" + razorpay_payment_id)
@@ -154,7 +154,7 @@ exports.verifyPayment = async (req, res) => {
       });
     }
 
-    // ✅ Get cart
+    //  Get cart
     const cart = await Cart.findOne({ userId });
 
     if (!cart || cart.items.length === 0) {
@@ -164,7 +164,7 @@ exports.verifyPayment = async (req, res) => {
       });
     }
 
-    // ✅ Optimize product fetching
+    //  Optimize product fetching
     const productIds = cart.items.map(item => item.productId);
     const products = await Product.find({ _id: { $in: productIds } });
 
@@ -173,7 +173,7 @@ exports.verifyPayment = async (req, res) => {
       productMap[p._id.toString()] = p;
     });
 
-    // ✅ Group by seller
+    //  Group by seller
     const sellerMap = {};
 
     for (const item of cart.items) {
@@ -199,7 +199,7 @@ exports.verifyPayment = async (req, res) => {
       sellerMap[sellerId].totalAmount += item.price * item.quantity;
     }
 
-    // ✅ Create orders per seller
+    // Create orders per seller
     const orders = [];
 
     for (const sellerId in sellerMap) {
@@ -219,7 +219,7 @@ exports.verifyPayment = async (req, res) => {
       orders.push(order);
     }
 
-    // 🧹 Clear cart
+    //  Clear cart
     await Cart.findOneAndDelete({ userId });
 
     res.status(200).json({
