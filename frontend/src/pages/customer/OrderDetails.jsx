@@ -259,7 +259,7 @@ export default function OrderDetails() {
         ))}
       </div>
 
-      {/* 🔥 Timeline */}
+      {/*  Timeline */}
       <div className="bg-white p-4 rounded-xl shadow">
         <h3 className="font-semibold mb-4">Order Timeline</h3>
 

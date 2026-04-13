@@ -117,7 +117,7 @@ export default function SearchPage() {
                   alt={item.title}
                 />
 
-                {/* ❤️ Wishlist */}
+                {/*  Wishlist */}
                 <button
                   onClick={(e) => toggleWishlist(item._id, e)}
                   className="absolute top-4 right-4 p-2.5 bg-white/80 backdrop-blur rounded-full opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all hover:bg-white shadow-sm"

@@ -21,7 +21,7 @@ function CategoryProducts() {
   const limit = 8;
   const [totalPages, setTotalPages] = useState(1);
 
-  // 🔥 FETCH PRODUCTS
+  //  FETCH PRODUCTS
   const getProducts = async () => {
     try {
       setLoading(true);
@@ -43,7 +43,7 @@ function CategoryProducts() {
     }
   };
 
-  // 🔥 FILTER HANDLERS
+  //  FILTER HANDLERS
   const handleColorChange = (color) => {
     if (selectedColors.includes(color)) {
       setSelectedColors(selectedColors.filter((c) => c !== color));
@@ -60,7 +60,7 @@ function CategoryProducts() {
     }
   };
 
-  // 🔥 WISHLIST
+  //  WISHLIST
   const getWishlist = async () => {
     const res = await axiosInstance.get("/wishlist/");
     const ids = res.data.data?.products?.map((i) => i._id) || [];
@@ -83,7 +83,7 @@ function CategoryProducts() {
     }
   };
 
-  // 🔥 RESET PAGE WHEN FILTER CHANGES
+  //  RESET PAGE WHEN FILTER CHANGES
   useEffect(() => {
     setPage(1);
   }, [selectedColors, selectedBrands, sort, minPrice, maxPrice]);
@@ -109,7 +109,7 @@ function CategoryProducts() {
   return (
     <div className="bg-white w-full mx-auto px-4 md:px-10 lg:px-16 py-10 md:py-16">
       
-      {/* 🔥 TITLE & FILTER HEADER */}
+      {/*  TITLE & FILTER HEADER */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-end border-b border-gray-200 pb-6 mb-10">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 mb-2 uppercase">
@@ -135,7 +135,7 @@ function CategoryProducts() {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-12">
-        {/* 🔥 SIDEBAR FILTERS */}
+        {/*  SIDEBAR FILTERS */}
         <div className="w-full lg:w-[260px] shrink-0 space-y-10">
           
           {/* BRAND */}
@@ -207,7 +207,7 @@ function CategoryProducts() {
           </div>
         </div>
 
-        {/* 🔥 PRODUCTS LIST */}
+        {/*  PRODUCTS LIST */}
         <div className="flex-1">
           {loading ? (
             <div className="flex justify-center items-center h-64">
@@ -246,7 +246,7 @@ function CategoryProducts() {
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
 
-                    {/* ❤️ Wishlist */}
+                    {/*  Wishlist */}
                     <button
                       onClick={(e) => toggleWishlist(item._id, e)}
                       className="absolute top-4 right-4 p-2.5 bg-white/80 backdrop-blur rounded-full opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all hover:bg-white shadow-sm"
@@ -288,7 +288,7 @@ function CategoryProducts() {
             </div>
           )}
 
-          {/* 🔥 PAGINATION */}
+          {/*  PAGINATION */}
           {totalPages > 1 && (
             <div className="flex justify-center items-center mt-16 gap-3">
               <button

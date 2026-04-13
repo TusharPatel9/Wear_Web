@@ -19,14 +19,14 @@ function UserNavbar() {
 
   const navigate = useNavigate();
 
-  // 🔥 Scroll effect
+  //  Scroll effect
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 🔥 Get User Profile
+  //  Get User Profile
   const getCustomerDetail = async () => {
     try {
       const res = await axiosInstance.get("/user/profile");
@@ -48,7 +48,7 @@ function UserNavbar() {
     }
   };
 
-  // 🔥 Check Token
+  //  Check Token
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
 
@@ -61,7 +61,7 @@ function UserNavbar() {
     }
   }, []);
 
-  // 🔥 Get Categories
+  //  Get Categories
   const getCategories = async () => {
     try {
       const res = await axiosInstance.get("/category/categories");
@@ -75,7 +75,7 @@ function UserNavbar() {
     getCategories();
   }, []);
 
-  // 🔥 Convert Flat → Tree
+  //  Convert Flat → Tree
   const buildCategoryTree = (data) => {
     const map = {};
     const roots = [];
@@ -161,7 +161,7 @@ function UserNavbar() {
 
         {/* RIGHT */}
         <div className="hidden md:flex items-center gap-6 text-gray-800">
-          {/* 🔥 SEARCH BAR */}
+          {/*  SEARCH BAR */}
           <div className="hidden md:flex items-center bg-secondary-gray px-4 py-2.5 rounded-full w-[300px] hover:bg-gray-200 focus-within:bg-white focus-within:ring-1 focus-within:ring-black transition-all">
             <IoMdSearch className="text-gray-500 text-lg mr-2" />
 

@@ -35,7 +35,7 @@ export default function Address() {
     getAddresses();
   }, []);
 
-  // 🔥 Submit (Add / Update)
+  //  Submit (Add / Update)
   const onSubmit = async (data) => {
     try {
       if (editId) {
@@ -55,7 +55,7 @@ export default function Address() {
     }
   };
 
-  // 🔥 Delete
+  //  Delete
   const handleDelete = async (id) => {
     try {
       await axiosInstance.delete(`/address/delete-address?addressId=${id}`);
@@ -66,7 +66,7 @@ export default function Address() {
     }
   };
 
-  // 🔥 Edit
+  //  Edit
   const handleEdit = (addr) => {
     setValue("area", addr.area);
     setValue("city", addr.city);

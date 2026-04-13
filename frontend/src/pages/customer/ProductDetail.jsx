@@ -29,7 +29,7 @@ function ProductDetail() {
   };
 
   const handleAddToCart = async () => {
-    // ✅ Size validation
+    //  Size validation
     if (product.size?.length > 0 && !selectedSize) {
       setError("Please select a size");
       return;

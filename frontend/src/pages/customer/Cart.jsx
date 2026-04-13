@@ -71,7 +71,7 @@ function Cart() {
           Your Bag
         </h1>
 
-        {/* ✅ EMPTY CART UI */}
+        {/*  EMPTY CART UI */}
         {cart?.items?.length === 0 || !cart ? (
           <div className="flex flex-col items-center justify-center py-20 text-center bg-gray-50 rounded-3xl">
             <div className="mb-6 opacity-30">

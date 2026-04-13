@@ -35,7 +35,7 @@ export default function Wishlist() {
     }
   };
 
-  // ✅ MOVE TO CART FUNCTION
+  //  MOVE TO CART FUNCTION
   const moveToCart = async (item, e) => {
     e.stopPropagation();
     try {
@@ -98,7 +98,7 @@ export default function Wishlist() {
                   alt={item.title}
                 />
 
-                {/* ❌ Remove Button */}
+                {/*  Remove Button */}
                 <button
                   onClick={(e) => removeItemFromWishlist(item._id, e)}
                   className="absolute top-4 right-4 p-2 bg-white/80 backdrop-blur rounded-full opacity-100 hover:bg-white shadow-sm transition-all"
