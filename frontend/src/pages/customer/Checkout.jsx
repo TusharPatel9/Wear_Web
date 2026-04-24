@@ -156,6 +156,11 @@ function Checkout() {
             }
           };
 
+          if (!window.Razorpay) {
+            toast.error("Razorpay SDK failed to load. Please check your connection.");
+            return;
+          }
+
           const rzp = new window.Razorpay(options);
           rzp.on("payment.failed", function (response) {
             toast.error("Payment failed. Please try again.");
@@ -163,7 +168,8 @@ function Checkout() {
           rzp.open();
         }
       } catch (error) {
-        toast.error("Failed to initiate Razorpay checkout.");
+        console.error("Razorpay Initiation Error:", error);
+        toast.error(error.response?.data?.message || "Failed to initiate Razorpay checkout.");
       }
     }
   };

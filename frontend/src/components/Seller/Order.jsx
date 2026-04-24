@@ -141,7 +141,7 @@ export default function Order() {
                     "Placed",
                     "Shipped",
                     "Delivered",
-                    "Cancelled",
+                    // "Cancelled",
                   ].map((statusOption) => (
                     <p
                       key={statusOption}

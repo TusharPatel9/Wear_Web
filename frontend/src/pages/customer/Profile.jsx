@@ -72,9 +72,9 @@ export default function Profile() {
       {/* Header */}
       <div className="mb-8">
         <h2 className="text-3xl font-extrabold text-gray-900">Your Profile</h2>
-        <p className="text-gray-600">
+        {/* <p className="text-gray-600">
           Manage your account information and preferences.
-        </p>
+        </p> */}
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden max-w-4xl">

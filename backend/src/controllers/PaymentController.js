@@ -109,7 +109,7 @@ exports.createRazorpayOrder = async (req, res) => {
     });
 
     const options = {
-      amount: totalAmount * 100,
+      amount: Math.round(totalAmount * 100),
       currency: "INR",
       receipt: `receipt_${userId.toString().slice(-4)}_${Date.now()}`,
     };

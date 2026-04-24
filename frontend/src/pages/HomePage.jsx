@@ -21,7 +21,7 @@ function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % heroImages.length);
-    }, 2000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 

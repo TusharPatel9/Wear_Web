@@ -193,7 +193,7 @@ exports.forgotPassword = async (req, res) => {
     await mailSend(
       user.email,
       "Password Reset Verification",
-      `<h1>Password Reset</h1><p>Your OTP for resetting the password is <strong>${generatedOTP}</strong>. It is valid for 15 minutes.</p>`
+      `<h1>Password Reset</h1><p>Your OTP for resetting the password is <strong>${generatedOTP}</strong>. It is valid for 1 minute.</p>`
     );
 
     res.status(200).json({ success: true, message: "OTP sent to your email" });
